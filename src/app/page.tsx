@@ -33,7 +33,9 @@ import {
   Lock,
   LogOut,
   Download,
-  Info
+  Info,
+  Smartphone,
+  SmartphoneIcon as SmartphoneIos
 } from 'lucide-react';
 import {
   Dialog,
@@ -73,54 +75,52 @@ export default function Home() {
 
   // PWA states
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallButton, setShowInstallButton] = useState(false);
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
 
   const { toast } = useToast();
 
-  // Escuchar evento de instalación (Chrome/Android)
   useEffect(() => {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setShowInstallButton(true);
       console.log('Evento beforeinstallprompt capturado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Ocultar si ya está instalada o es standalone
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
-    if (isStandalone) {
-      setShowInstallButton(false);
-    } else {
-      // Mostrar ayuda de instalación por defecto en móviles si no está instalada
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) setShowInstallButton(true);
-    }
+    if (isStandalone) setIsAppInstalled(true);
 
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
-  const handleInstallClick = async () => {
+  const handleInstallAndroid = async () => {
     vibrate(20);
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
-        setShowInstallButton(false);
+        toast({ title: "INSTALANDO...", description: "CREANDO ACCESO DIRECTO EN TU INICIO" });
       }
     } else {
-      // Ayuda para iOS o navegadores que no soportan el prompt directo
       toast({ 
-        title: "GUÍA DE INSTALACIÓN (iOS/SAFARI)", 
-        description: "1. TOCA EL BOTÓN 'COMPARTIR' (EL CUADRADO CON FLECHA). 2. SELECCIONA 'AÑADIR A PANTALLA DE INICIO'.",
-        duration: 8000
+        title: "SISTEMA NO DISPONIBLE", 
+        description: "EL NAVEGADOR NO PERMITE LA INSTALACIÓN DIRECTA AHORA MISMO. PRUEBA USANDO CHROME.",
+        variant: "destructive"
       });
     }
   };
 
-  // Carga inicial de datos y persistencia de sesión
+  const handleShowIosHelp = () => {
+    vibrate(20);
+    toast({ 
+      title: "GUÍA PARA iPHONE", 
+      description: "1. TOCA EL BOTÓN 'COMPARTIR' (CUADRADO CON FLECHA). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
+      duration: 10000
+    });
+  };
+
   useEffect(() => {
     const ownerName = getHomeOwnerName();
     const storedDevices = getStoredDevices();
@@ -131,7 +131,6 @@ export default function Home() {
       setHomeOwner(ownerName);
     }
 
-    // Verificar si hay una sesión activa previa
     if (isSessionActive()) {
       setIsAuthenticated(true);
     }
@@ -139,7 +138,6 @@ export default function Home() {
     setIsInitialized(true);
   }, []);
 
-  // Guardado automático persistente
   useEffect(() => {
     if (!isInitialized) return;
     saveDevices(devices);
@@ -150,7 +148,6 @@ export default function Home() {
     const savedPass = getHomeOwnerPassword();
 
     if (!hasAccount) {
-      // Registro inicial
       if (!nameInput.trim() || !passInput.trim()) return;
       saveHomeOwnerName(nameInput);
       saveHomeOwnerPassword(passInput);
@@ -161,7 +158,6 @@ export default function Home() {
       vibrate([20, 100]);
       toast({ title: "PERFIL CREADO", description: `BIENVENIDO, ${nameInput.toUpperCase()}` });
     } else {
-      // Login recurrente
       if (nameInput.trim().toUpperCase() === savedName.toUpperCase() && passInput === savedPass) {
         setIsAuthenticated(true);
         setSessionActive(true);
@@ -177,8 +173,6 @@ export default function Home() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     clearSession();
-    setNameInput('');
-    setPassInput('');
     vibrate(50);
   };
 
@@ -190,7 +184,6 @@ export default function Home() {
     };
     setDevices(prev => [...prev, newDevice]);
     setIsAddOpen(false);
-    toast({ title: "ZONA AGREGADA", description: `${data.name.toUpperCase()} LISTO PARA CONTROLAR` });
   };
 
   const handleUpdateDevice = (id: string, updates: Partial<Device>) => {
@@ -200,7 +193,6 @@ export default function Home() {
   const handleDeleteDevice = (id: string) => {
     vibrate(30);
     setDevices(prev => prev.filter(d => d.id !== id));
-    toast({ variant: "destructive", title: "ZONA ELIMINADA", description: "LA CONFIGURACIÓN SE HA BORRADO" });
   };
 
   const handleStartEdit = (device: Device) => {
@@ -213,22 +205,16 @@ export default function Home() {
       handleUpdateDevice(deviceToEdit.id, data);
       setIsEditOpen(false);
       setDeviceToEdit(null);
-      toast({ title: "CAMBIOS GUARDADOS", description: "ZONA ACTUALIZADA CORRECTAMENTE" });
     }
   };
 
   const turnOffAll = useCallback(() => {
     vibrate([50, 100, 50]);
-    const activeDevices = devices.filter(d => d.status);
-    if (activeDevices.length === 0) {
-      toast({ title: "ESTADO ACTUAL", description: "TODAS LAS LUCES YA ESTÁN APAGADAS" });
-      return;
-    }
     setDevices(prev => prev.map(d => ({ ...d, status: false })));
-    activeDevices.forEach(device => {
+    devices.filter(d => d.status).forEach(device => {
       fetch(`http://${device.ip}/toggle${device.channel}`, { method: 'POST', mode: 'no-cors' }).catch(() => {});
     });
-  }, [devices, toast]);
+  }, [devices]);
 
   const filteredDevices = useMemo(() => {
     if (!searchTerm) return devices;
@@ -236,7 +222,6 @@ export default function Home() {
     return devices.filter(d => d.name.toLowerCase().includes(lowerSearch) || d.ip.includes(searchTerm));
   }, [devices, searchTerm]);
 
-  // Pull-to-Refresh
   const handleTouchStart = (e: React.TouchEvent) => { if (window.scrollY === 0) touchStartRef.current = e.touches[0].clientY; };
   const handleTouchMove = (e: React.TouchEvent) => {
     if (window.scrollY === 0 && !isRefreshing) {
@@ -264,7 +249,7 @@ export default function Home() {
           
           <div className="space-y-2">
             <h1 className="text-5xl font-black tracking-tighter uppercase italic leading-tight">
-              {!hasAccount ? 'BIENVENIDO' : 'INICIAR SESIÓN'}
+              {!hasAccount ? 'REGISTRAR' : 'ACCEDER'}
             </h1>
             <p className="text-white/70 font-black uppercase tracking-widest text-[10px]">
               {!hasAccount ? 'CREA TU PERFIL DE HOGAR' : `HOGAR DE ${homeOwner.toUpperCase()}`}
@@ -334,19 +319,17 @@ export default function Home() {
             <div className="bg-primary h-14 w-14 rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30">
               <Zap className="text-white fill-current" size={28} />
             </div>
-            <div>
-              <h1 className="text-2xl font-black tracking-tighter leading-none uppercase italic">LUZ CONTROL</h1>
-              <div onClick={() => { setIsOwnerOpen(true); vibrate(10); }} className="flex items-center gap-2 mt-1 cursor-pointer">
-                <p className="text-[10px] uppercase tracking-widest font-black text-slate-500 flex items-center gap-1.5 hover:text-primary transition-colors">
-                  <User size={12} className="text-primary" /> HOGAR DE {homeOwner.toUpperCase()}
-                </p>
-              </div>
+            <div onClick={() => { setIsOwnerOpen(true); vibrate(10); }} className="cursor-pointer group">
+              <h1 className="text-2xl font-black tracking-tighter leading-none uppercase italic group-hover:text-primary transition-colors">LUZ CONTROL</h1>
+              <p className="text-[10px] uppercase tracking-widest font-black text-slate-500 flex items-center gap-1.5 mt-1">
+                <User size={12} className="text-primary" /> HOGAR DE {homeOwner.toUpperCase()}
+              </p>
             </div>
           </div>
 
           <div className="flex gap-2">
-            {showInstallButton && (
-              <Button onClick={handleInstallClick} variant="outline" className="hidden md:flex rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button">
+            {!isAppInstalled && (
+              <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="hidden md:flex rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button">
                 <Download size={18} className="mr-2" /> INSTALAR
               </Button>
             )}
@@ -395,12 +378,6 @@ export default function Home() {
                 {filteredDevices.map(device => (
                   <DeviceCard key={device.id} device={device} onUpdate={handleUpdateDevice} onDelete={handleDeleteDevice} onEdit={handleStartEdit} refreshTrigger={refreshTrigger} />
                 ))}
-                {filteredDevices.length === 0 && (
-                  <div className="col-span-full py-20 text-center space-y-4">
-                    <div className="bg-slate-100 h-20 w-20 rounded-full flex items-center justify-center mx-auto text-slate-300"><Search size={40} /></div>
-                    <p className="text-slate-400 font-black uppercase text-xs tracking-widest">{searchTerm ? "NO SE ENCONTRARON ZONAS" : "COMIENZA AGREGANDO UNA LUZ"}</p>
-                  </div>
-                )}
               </div>
             </div>
           ) : ( <GuideTab /> )}
@@ -409,27 +386,35 @@ export default function Home() {
 
       <Dialog open={isOwnerOpen} onOpenChange={setIsOwnerOpen}>
         <DialogContent className="sm:max-w-md rounded-[3rem] bg-white p-10 border-none">
-          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">PERFIL</DialogTitle></DialogHeader>
-          <div className="space-y-6 pt-4">
+          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">PERFIL Y AYUDA</DialogTitle></DialogHeader>
+          <div className="space-y-8 pt-4">
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">NOMBRE DEL HOGAR</label>
               <Input value={homeOwner} onChange={(e) => setHomeOwner(e.target.value)} className="h-16 rounded-2xl font-black text-lg px-5 uppercase" />
             </div>
             
-            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center gap-2 text-primary">
-                <Info size={16} />
-                <p className="text-[10px] font-black uppercase tracking-widest">AYUDA INSTALACIÓN</p>
+                <Smartphone size={18} />
+                <h3 className="text-sm font-black uppercase tracking-widest">INSTALACIÓN EN MÓVIL</h3>
               </div>
-              <p className="text-[11px] font-medium text-slate-500 leading-relaxed uppercase">
-                PARA INSTALAR EN TU CELULAR: EN ANDORID USA EL BOTÓN DE ABAJO. EN iOS TOCA COMPARTIR Y "AÑADIR A PANTALLA DE INICIO".
+              
+              <div className="grid grid-cols-1 gap-3">
+                <Button onClick={handleInstallAndroid} className="h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-[11px] flex items-center justify-center gap-3">
+                  <Smartphone size={20} /> INSTALAR EN ANDROID
+                </Button>
+                
+                <Button onClick={handleShowIosHelp} variant="outline" className="h-16 rounded-2xl border-2 border-primary/20 text-primary font-black uppercase text-[11px] flex items-center justify-center gap-3">
+                  <SmartphoneIos size={20} /> AYUDA PARA iOS (iPHONE)
+                </Button>
+              </div>
+              
+              <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase text-center px-4">
+                INSTALA LA APP PARA CONTROLAR TUS LUCES AL INSTANTE DESDE TU PANTALLA DE INICIO.
               </p>
-              <Button onClick={handleInstallClick} className="w-full h-14 rounded-xl bg-slate-900 text-white font-black text-[10px] uppercase">
-                <Download size={16} className="mr-2" /> INSTALAR APP
-              </Button>
             </div>
 
-            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase">GUARDAR CAMBIOS</Button>
+            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase shadow-xl">GUARDAR CAMBIOS</Button>
           </div>
         </DialogContent>
       </Dialog>
