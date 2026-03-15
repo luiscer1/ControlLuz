@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef, useTransition } from 'react';
@@ -32,8 +33,7 @@ import {
   ArrowRight,
   Lock,
   LogOut,
-  Smartphone,
-  SmartphoneIcon as SmartphoneIos
+  Smartphone
 } from 'lucide-react';
 import {
   Dialog,
@@ -48,7 +48,6 @@ import { useToast } from '@/hooks/use-toast';
 export default function Home() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [activeTab, setActiveTab] = useState<'control' | 'guide'>('control');
-  const [isPending, startTransition] = useTransition();
   const [isInitialized, setIsInitialized] = useState(false);
   
   const [isAddOpen, setIsAddOpen] = useState(false);
@@ -71,24 +70,7 @@ export default function Home() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const touchStartRef = useRef(0);
 
-  // PWA state
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
-
   const { toast } = useToast();
-
-  useEffect(() => {
-    const isStandalone = typeof window !== 'undefined' && (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone);
-    if (isStandalone) setIsAppInstalled(true);
-  }, []);
-
-  const handleShowIosHelp = () => {
-    vibrate(20);
-    toast({ 
-      title: "GUÍA PARA iPHONE", 
-      description: "1. TOCA 'COMPARTIR' (CUADRADO CON FLECHA). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
-      duration: 10000
-    });
-  };
 
   useEffect(() => {
     const ownerName = getHomeOwnerName();
@@ -297,11 +279,9 @@ export default function Home() {
           </div>
 
           <div className="flex gap-2">
-            {!isAppInstalled && (
-              <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
-                <SmartphoneIos size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">AYUDA iOS</span>
-              </Button>
-            )}
+            <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
+              <Smartphone size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">AYUDA iOS</span>
+            </Button>
             <Button onClick={handleLogout} variant="ghost" className="rounded-2xl h-14 w-14 p-0 bg-white shadow-sm text-slate-400 hover:text-rose-500">
               <LogOut size={24} />
             </Button>
@@ -364,7 +344,7 @@ export default function Home() {
             
             <div className="space-y-4 pt-4 border-t border-slate-100">
               <div className="flex items-center gap-2 text-primary">
-                <SmartphoneIos size={18} />
+                <Smartphone size={18} />
                 <h3 className="text-sm font-black uppercase tracking-widest">AYUDA iPHONE (iOS)</h3>
               </div>
               
@@ -386,9 +366,6 @@ export default function Home() {
                     DALE A "AÑADIR" ARRIBA A LA DERECHA.
                   </li>
                 </ol>
-                <Button onClick={handleShowIosHelp} className="w-full h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] mt-2 action-button shadow-md">
-                   PROBAR GUÍA VISUAL
-                </Button>
               </div>
               
               <p className="text-[9px] font-black text-slate-400 leading-relaxed uppercase text-center px-4">
