@@ -1,13 +1,19 @@
-// Service Worker básico requerido para que Chrome habilite la instalación PWA
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
+const CACHE_NAME = 'luz-control-v1';
+const ASSETS = [
+  '/',
+  '/manifest.json'
+];
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
+  );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Solo passthrough para cumplir el requisito de PWA de Chrome
-  event.respondWith(fetch(event.request));
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
 });

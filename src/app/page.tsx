@@ -83,7 +83,6 @@ export default function Home() {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      console.log('Evento de instalación detectado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -116,7 +115,7 @@ export default function Home() {
     vibrate(20);
     toast({ 
       title: "GUÍA PARA iPHONE", 
-      description: "1. TOCA EL BOTÓN 'COMPARTIR' (CUADRADO CON FLECHA ABAJO). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
+      description: "1. TOCA EL BOTÓN 'COMPARTIR' (CUADRADO CON FLECHA ARRIBA). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
       duration: 10000
     });
   };
