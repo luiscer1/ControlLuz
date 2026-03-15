@@ -1,12 +1,11 @@
 {
   "name": "Luz Control",
   "short_name": "LuzControl",
-  "description": "Asistencia Motriz - Control de entorno local",
+  "description": "Control de iluminación local para asistencia motriz",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#F4F4F9",
-  "theme_color": "#2563eb",
+  "theme_color": "#221.2 83.2% 53.3%",
   "icons": [
     {
       "src": "https://picsum.photos/seed/luzcontrol/192/192",
@@ -17,7 +16,8 @@
     {
       "src": "https://picsum.photos/seed/luzcontrol/512/512",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
