@@ -100,12 +100,12 @@ export default function Home() {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
-        toast({ title: "INSTALANDO...", description: "CREANDO ACCESO DIRECTO" });
+        toast({ title: "INSTALANDO...", description: "AÑADIENDO A PANTALLA DE INICIO" });
       }
     } else {
       toast({ 
         title: "INSTALACIÓN MANUAL", 
-        description: "TOCA LOS 3 PUNTOS (⋮) DEL NAVEGADOR Y SELECCIONA 'INSTALAR APLICACIÓN' O 'AÑADIR A PANTALLA DE INICIO'.",
+        description: "TOCA EL MENÚ (⋮) DE CHROME Y SELECCIONA 'INSTALAR APLICACIÓN' O 'AÑADIR A PANTALLA DE INICIO'.",
         duration: 10000
       });
     }
@@ -115,7 +115,7 @@ export default function Home() {
     vibrate(20);
     toast({ 
       title: "GUÍA PARA iPHONE", 
-      description: "1. TOCA EL BOTÓN 'COMPARTIR' (CUADRADO CON FLECHA ARRIBA). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
+      description: "1. TOCA 'COMPARTIR' (CUADRADO CON FLECHA). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
       duration: 10000
     });
   };
