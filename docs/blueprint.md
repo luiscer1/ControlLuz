@@ -1,17 +1,13 @@
-# **App Name**: Luz Control
-
-## Core Features:
-
-- Device Discovery: Automatically scan the local network to find and display available ESP32/ESP8266 devices using local HTTP requests.
-- Device Management (Add, Edit, Delete & Persistence): Allow users to add new devices manually (via IP), and to edit (change name or IP) or delete existing devices from the list via a long-press menu on the main screen. The list of devices is persistently stored using AsyncStorage.
-- Basic Light Control: Send commands to toggle connected lights on/off and adjust brightness levels if supported by the device, communicating via local HTTP requests.
-- Real-time Status Display: Display the current state (on/off, brightness) of all connected and active light devices, updated in real-time via local HTTP polling.
-- Integrated Configuration Guide: Provide an in-app 'Guide' section with example code for ESP32/ESP8266 devices, allowing users to easily copy it directly to their clipboard, along with clear 4-step instructions (Connect, Upload, Serial Monitor, Add IP) for initial device setup within the Arduino IDE. This ensures users can get their ESP devices ready without leaving the app.
-
-## Style Guidelines:
-
-- The palette is light and modern, designed to convey clarity and technological control, with high contrast for improved accessibility. The primary color is a vibrant blue (#1A73E8), chosen to evoke precision and a clean interface. The background is an almost-white, very subtle light grey-blue (#F5F7FA), providing an expansive, clean canvas. An expressive purple (#6C3DEB) serves as the accent, offering contrast and signaling key interactive elements.
-- Body and headline font: 'Inter' (sans-serif) for its modern, objective, and neutral aesthetic, ensuring excellent readability and a polished feel throughout the application. Emphasis on a legible and dignified appearance.
-- Use clear, concise icons that represent common smart home actions and device states (e.g., light bulb icons, power toggles, sliders for brightness). Prioritize simple, line-based designs for a minimalist and modern look.
-- Implement a clean, card-based layout for listing devices, ensuring each device's status and controls are easily accessible and visually distinct. Maintain consistent padding and margins for a balanced and intuitive user experience. The overall design should be minimalist and legible.
-- Incorporate subtle feedback animations for button presses, toggle switches, and connection status changes to enhance user interaction and indicate system responsiveness. Include haptic feedback (vibration) upon button presses to provide tactile confirmation.
+Nombre de la aplicación : Luz Control
+Características principales:
+Detección de dispositivos: Escanea automáticamente la red local para encontrar y mostrar los dispositivos ESP32/ESP8266 disponibles mediante solicitudes HTTP locales.
+Administración de dispositivos (Agregar, Editar, Eliminar y Persistencia): Permite a los usuarios agregar nuevos dispositivos manualmente (mediante IP) y editar (cambiar nombre o IP) o eliminar dispositivos existentes de la lista mediante un menú que se activa al mantener pulsado en la pantalla principal. La lista de dispositivos se almacena de forma persistente mediante AsyncStorage.
+Control básico de la iluminación: Envía comandos para encender/apagar las luces conectadas y ajustar los niveles de brillo, si el dispositivo lo admite, comunicándose mediante solicitudes HTTP locales.
+Visualización del estado en tiempo real: Muestra el estado actual (encendido/apagado, brillo) de todos los dispositivos de iluminación conectados y activos, actualizado en tiempo real mediante sondeo HTTP local.
+Guía de configuración integrada: La aplicación incluye una sección de "Guía" con código de ejemplo para dispositivos ESP32/ESP8266, que permite a los usuarios copiarlo fácilmente al portapapeles. Además, ofrece instrucciones claras de 4 pasos (Conectar, Cargar, Monitor serie, Agregar IP) para la configuración inicial del dispositivo en el IDE de Arduino. Esto garantiza que los usuarios puedan preparar sus dispositivos ESP sin salir de la aplicación.
+Pautas de estilo:
+La paleta es ligera y moderna, diseñada para transmitir claridad y control tecnológico, con alto contraste para una mejor accesibilidad. El color principal es un azul vibrante (#1A73E8), elegido para evocar precisión y una interfaz limpia. El fondo es un gris azulado claro muy sutil, casi blanco (#F5F7FA), que proporciona un lienzo amplio y limpio. Un morado expresivo (#6C3DEB) sirve de acento, ofreciendo contraste y señalando los elementos interactivos clave.
+Tipografía para el cuerpo del texto y los titulares: «Inter» (sans-serif) por su estética moderna, objetiva y neutra, que garantiza una excelente legibilidad y una apariencia elegante en toda la aplicación. Se prioriza una presentación legible y distinguida.
+Utilice iconos claros y concisos que representen acciones comunes del hogar inteligente y estados de los dispositivos (por ejemplo, iconos de bombillas, interruptores de encendido/apagado, controles deslizantes de brillo). Priorice los diseños sencillos basados ​​en líneas para lograr un aspecto minimalista y moderno.
+Implementa un diseño limpio basado en tarjetas para mostrar los dispositivos, asegurando que el estado y los controles de cada uno sean fácilmente accesibles y visualmente diferenciados. Mantén márgenes y rellenos uniformes para una experiencia de usuario equilibrada e intuitiva. El diseño general debe ser minimalista y legible.
+Incorpora animaciones sutiles de retroalimentación para las pulsaciones de botones, los interruptores y los cambios de estado de la conexión, con el fin de mejorar la interacción del usuario e indicar la capacidad de respuesta del sistema. 
