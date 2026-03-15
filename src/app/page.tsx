@@ -182,6 +182,41 @@ export default function Home() {
     vibrate(50);
   };
 
+  const handleAddDevice = (data: Omit<Device, 'id' | 'status'>) => {
+    const newDevice: Device = {
+      ...data,
+      id: Math.random().toString(36).substr(2, 9),
+      status: false
+    };
+    setDevices(prev => [...prev, newDevice]);
+    setIsAddOpen(false);
+    toast({ title: "ZONA AGREGADA", description: `${data.name.toUpperCase()} LISTO PARA CONTROLAR` });
+  };
+
+  const handleUpdateDevice = (id: string, updates: Partial<Device>) => {
+    setDevices(prev => prev.map(d => d.id === id ? { ...d, ...updates } : d));
+  };
+
+  const handleDeleteDevice = (id: string) => {
+    vibrate(30);
+    setDevices(prev => prev.filter(d => d.id !== id));
+    toast({ variant: "destructive", title: "ZONA ELIMINADA", description: "LA CONFIGURACIÓN SE HA BORRADO" });
+  };
+
+  const handleStartEdit = (device: Device) => {
+    setDeviceToEdit(device);
+    setIsEditOpen(true);
+  };
+
+  const handleSaveEdit = (data: Omit<Device, 'id' | 'status'>) => {
+    if (deviceToEdit) {
+      handleUpdateDevice(deviceToEdit.id, data);
+      setIsEditOpen(false);
+      setDeviceToEdit(null);
+      toast({ title: "CAMBIOS GUARDADOS", description: "ZONA ACTUALIZADA CORRECTAMENTE" });
+    }
+  };
+
   const turnOffAll = useCallback(() => {
     vibrate([50, 100, 50]);
     const activeDevices = devices.filter(d => d.status);
@@ -387,7 +422,7 @@ export default function Home() {
                 <p className="text-[10px] font-black uppercase tracking-widest">AYUDA INSTALACIÓN</p>
               </div>
               <p className="text-[11px] font-medium text-slate-500 leading-relaxed uppercase">
-                PARA INSTALAR EN TU CELULAR: EN ANDORID USA EL BOTÓN DE ABAJO. EN iOS TOCA COMPARTIR Y "AÑADIR A INICIO".
+                PARA INSTALAR EN TU CELULAR: EN ANDORID USA EL BOTÓN DE ABAJO. EN iOS TOCA COMPARTIR Y "AÑADIR A PANTALLA DE INICIO".
               </p>
               <Button onClick={handleInstallClick} className="w-full h-14 rounded-xl bg-slate-900 text-white font-black text-[10px] uppercase">
                 <Download size={16} className="mr-2" /> INSTALAR APP
