@@ -3,23 +3,14 @@ import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Script from 'next/script';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-
-const appIcon = PlaceHolderImages.find(img => img.id === 'app-icon')?.imageUrl || 'https://picsum.photos/seed/luz-control-bulb-final/512/512';
 
 export const metadata: Metadata = {
   title: 'Luz Control',
   description: 'Control de Iluminación Inteligente - Asistencia Motriz',
   icons: {
-    icon: [
-      { url: appIcon, sizes: 'any' },
-      { url: appIcon, type: 'image/png', sizes: '32x32' },
-      { url: appIcon, type: 'image/png', sizes: '16x16' }
-    ],
-    shortcut: [appIcon],
-    apple: [
-      { url: appIcon, sizes: '180x180', type: 'image/png' }
-    ],
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
   },
   manifest: '/manifest.json',
 };
