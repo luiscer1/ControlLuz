@@ -37,11 +37,12 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
+        <link rel="manifest" href="/manifest.json" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="https://picsum.photos/seed/luzcontrol/192/192" />
+        <meta name="theme-color" content="#F4F4F9" />
       </head>
       <body className="font-body antialiased bg-[#F4F4F9] text-foreground" suppressHydrationWarning>
         {children}
@@ -51,9 +52,9 @@ export default function RootLayout({
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                  console.log('ServiceWorker registrado:', registration.scope);
+                  console.log('ServiceWorker registrado con éxito:', registration.scope);
                 }).catch(function(err) {
-                  console.log('Fallo al registrar SW:', err);
+                  console.log('Fallo al registrar ServiceWorker:', err);
                 });
               });
             }

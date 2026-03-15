@@ -33,7 +33,6 @@ import {
   Lock,
   LogOut,
   Download,
-  Info,
   Smartphone,
   SmartphoneIcon as SmartphoneIos
 } from 'lucide-react';
@@ -83,6 +82,7 @@ export default function Home() {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      console.log('Evento beforeinstallprompt capturado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -105,8 +105,8 @@ export default function Home() {
     } else {
       toast({ 
         title: "INSTALACIÓN MANUAL", 
-        description: "TOCA LOS 3 PUNTOS DEL NAVEGADOR Y SELECCIONA 'INSTALAR APLICACIÓN' O 'AÑADIR A PANTALLA DE INICIO'.",
-        duration: 8000
+        description: "TOCA LOS 3 PUNTOS (⋮) DEL NAVEGADOR Y SELECCIONA 'INSTALAR APLICACIÓN' O 'AÑADIR A PANTALLA DE INICIO'.",
+        duration: 10000
       });
     }
   };
@@ -415,7 +415,7 @@ export default function Home() {
               </div>
               
               <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase text-center px-4 mt-2">
-                INSTALA LA APP PARA CONTROLAR TUS LUCES AL INSTANTE DESDE TU PANTALLA DE INICIO.
+                AL INSTALAR LA APP APARECERÁ EL ICONO EN TU TELÉFONO Y SE ABRIRÁ A PANTALLA COMPLETA.
               </p>
             </div>
 
