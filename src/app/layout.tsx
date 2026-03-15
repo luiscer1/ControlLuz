@@ -5,7 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import Script from 'next/script';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-const appIcon = PlaceHolderImages.find(img => img.id === 'app-icon')?.imageUrl || 'https://picsum.photos/seed/luz-control-v99/512/512';
+// Icono personalizado para evitar el logo de Firebase
+const appIcon = PlaceHolderImages.find(img => img.id === 'app-icon')?.imageUrl || 'https://picsum.photos/seed/smart-bulb-99/512/512';
 
 export const metadata: Metadata = {
   title: 'Luz Control',
@@ -16,8 +17,8 @@ export const metadata: Metadata = {
       { url: appIcon, sizes: '32x32', type: 'image/png' },
       { url: appIcon, sizes: '16x16', type: 'image/png' },
     ],
-    shortcut: appIcon,
-    apple: appIcon,
+    shortcut: [{ url: appIcon }],
+    apple: [{ url: appIcon }],
   },
 };
 
@@ -42,8 +43,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
         
-        {/* Forzar icono en pestaña del navegador (favicon) */}
-        <link rel="icon" type="image/png" href={appIcon} sizes="any" />
+        {/* Forzar icono en pestaña del navegador (favicon) - Sobrescribe cualquier favicon.ico local */}
+        <link rel="icon" type="image/png" href={appIcon} />
         <link rel="shortcut icon" type="image/png" href={appIcon} />
         <link rel="apple-touch-icon" href={appIcon} />
         
