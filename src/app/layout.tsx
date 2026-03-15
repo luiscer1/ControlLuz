@@ -5,21 +5,23 @@ import { Toaster } from "@/components/ui/toaster";
 import Script from 'next/script';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
-// Icono personalizado para evitar el logo de Firebase
-const appIcon = PlaceHolderImages.find(img => img.id === 'app-icon')?.imageUrl || 'https://picsum.photos/seed/smart-bulb-99/512/512';
+const appIcon = PlaceHolderImages.find(img => img.id === 'app-icon')?.imageUrl || 'https://picsum.photos/seed/luz-control-bulb-final/512/512';
 
 export const metadata: Metadata = {
   title: 'Luz Control',
-  description: 'Asistencia Motriz - Control de entorno local',
+  description: 'Control de Iluminación Inteligente - Asistencia Motriz',
   icons: {
     icon: [
-      { url: appIcon, type: 'image/png' },
-      { url: appIcon, sizes: '32x32', type: 'image/png' },
-      { url: appIcon, sizes: '16x16', type: 'image/png' },
+      { url: appIcon, sizes: 'any' },
+      { url: appIcon, type: 'image/png', sizes: '32x32' },
+      { url: appIcon, type: 'image/png', sizes: '16x16' }
     ],
-    shortcut: [{ url: appIcon }],
-    apple: [{ url: appIcon }],
+    shortcut: [appIcon],
+    apple: [
+      { url: appIcon, sizes: '180x180', type: 'image/png' }
+    ],
   },
+  manifest: '/manifest.json',
 };
 
 export const viewport: Viewport = {
@@ -28,7 +30,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#2563eb',
+  themeColor: '#1A73E8',
 };
 
 export default function RootLayout({
@@ -42,12 +44,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
-        
-        {/* Forzar icono en pestaña del navegador (favicon) - Sobrescribe cualquier favicon.ico local */}
-        <link rel="icon" type="image/png" href={appIcon} />
-        <link rel="shortcut icon" type="image/png" href={appIcon} />
-        <link rel="apple-touch-icon" href={appIcon} />
-        
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -60,9 +56,9 @@ export default function RootLayout({
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                  console.log('ServiceWorker registrado:', registration.scope);
+                  console.log('ServiceWorker activo');
                 }).catch(function(err) {
-                  console.log('Fallo al registrar ServiceWorker:', err);
+                  console.log('Error SW:', err);
                 });
               });
             }
