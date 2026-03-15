@@ -4,7 +4,7 @@
     {
       "id": "app-icon",
       "description": "Icono de foco inteligente para la aplicación",
-      "imageUrl": "https://picsum.photos/seed/luzcontrol-bulb/512/512",
+      "imageUrl": "https://picsum.photos/seed/luzcontrol-bulb-v3/512/512",
       "imageHint": "smart lightbulb"
     }
   ]

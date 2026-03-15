@@ -20,7 +20,11 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: appIcon,
+    icon: [
+      { url: appIcon, type: 'image/png' },
+      { url: appIcon, sizes: '32x32', type: 'image/png' },
+      { url: appIcon, sizes: '16x16', type: 'image/png' },
+    ],
     shortcut: appIcon,
     apple: appIcon,
   },
@@ -46,18 +50,15 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
-        <link rel="manifest" href="/manifest.json" />
+        
+        {/* Forzar icono en pestaña del navegador */}
+        <link rel="icon" type="image/png" href={appIcon} sizes="any" />
+        <link rel="shortcut icon" type="image/png" href={appIcon} />
+        <link rel="apple-touch-icon" href={appIcon} />
+        
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        
-        {/* Favicon y Iconos de App */}
-        <link rel="icon" type="image/png" href={appIcon} />
-        <link rel="apple-touch-icon" href={appIcon} />
-        <link rel="apple-touch-icon" sizes="152x152" href={appIcon} />
-        <link rel="apple-touch-icon" sizes="180x180" href={appIcon} />
-        <link rel="apple-touch-icon" sizes="167x167" href={appIcon} />
-        
         <meta name="theme-color" content="#2563eb" />
       </head>
       <body className="font-body antialiased bg-[#F4F4F9] text-foreground" suppressHydrationWarning>
