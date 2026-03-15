@@ -8,7 +8,10 @@ import {
   getHomeOwnerName, 
   saveHomeOwnerName,
   getHomeOwnerPassword,
-  saveHomeOwnerPassword
+  saveHomeOwnerPassword,
+  isSessionActive,
+  setSessionActive,
+  clearSession
 } from '@/lib/devices-store';
 import { DeviceCard } from '@/components/DeviceCard';
 import { DeviceForm } from '@/components/DeviceForm';
@@ -51,8 +54,8 @@ export default function Home() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isOwnerOpen, setIsOwnerOpen] = useState(false);
   
-  const [onboardingMode, setOnboardingMode] = useState<'signup' | 'login'>('signup');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasAccount, setHasAccount] = useState(false);
   
   const [deviceToEdit, setDeviceToEdit] = useState<Device | null>(null);
   const [homeOwner, setHomeOwner] = useState('');
@@ -79,12 +82,13 @@ export default function Home() {
       e.preventDefault();
       setDeferredPrompt(e);
       setIsInstallable(true);
+      console.log('App is installable');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
     // Detectar si ya está instalada (standalone)
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
       setIsInstallable(false);
     }
 
@@ -109,15 +113,20 @@ export default function Home() {
     }
   };
 
-  // Carga inicial de datos
+  // Carga inicial de datos y persistencia de sesión
   useEffect(() => {
-    const owner = getHomeOwnerName();
-    const stored = getStoredDevices();
-    setDevices(stored);
+    const ownerName = getHomeOwnerName();
+    const storedDevices = getStoredDevices();
+    setDevices(storedDevices);
     
-    if (owner) {
-      setHomeOwner(owner);
-      setOnboardingMode('login');
+    if (ownerName) {
+      setHasAccount(true);
+      setHomeOwner(ownerName);
+    }
+
+    // Verificar si hay una sesión activa previa
+    if (isSessionActive()) {
+      setIsAuthenticated(true);
     }
     
     setIsInitialized(true);
@@ -179,36 +188,40 @@ export default function Home() {
     }, 150);
   }, [deviceToEdit, toast]);
 
-  const handleSignUp = useCallback(() => {
-    if (!nameInput.trim() || !passInput.trim()) return;
-    saveHomeOwnerName(nameInput);
-    saveHomeOwnerPassword(passInput);
-    setHomeOwner(nameInput);
-    setIsAuthenticated(true);
-    vibrate([20, 100]);
-    toast({ title: "PERFIL CREADO", description: `BIENVENIDO, ${nameInput.toUpperCase()}` });
-  }, [nameInput, passInput, toast]);
-
-  const handleLogin = useCallback(() => {
+  const handleAccess = useCallback(() => {
     const savedName = getHomeOwnerName();
     const savedPass = getHomeOwnerPassword();
-    
-    if (nameInput.trim().toUpperCase() === savedName.toUpperCase() && passInput === savedPass) {
+
+    if (!hasAccount) {
+      // Registro
+      if (!nameInput.trim() || !passInput.trim()) return;
+      saveHomeOwnerName(nameInput);
+      saveHomeOwnerPassword(passInput);
+      setHomeOwner(nameInput);
       setIsAuthenticated(true);
-      setHomeOwner(savedName);
+      setSessionActive(true);
+      setHasAccount(true);
       vibrate([20, 100]);
-      toast({ title: "ACCESO CONCEDIDO", description: `HOLA DE NUEVO, ${savedName.toUpperCase()}` });
+      toast({ title: "PERFIL CREADO", description: `BIENVENIDO, ${nameInput.toUpperCase()}` });
     } else {
-      vibrate([50, 50, 50]);
-      toast({ variant: "destructive", title: "ERROR DE ACCESO", description: "NOMBRE O CONTRASEÑA INCORRECTOS" });
+      // Login
+      if (nameInput.trim().toUpperCase() === savedName.toUpperCase() && passInput === savedPass) {
+        setIsAuthenticated(true);
+        setSessionActive(true);
+        vibrate([20, 100]);
+        toast({ title: "ACCESO CONCEDIDO", description: `HOLA DE NUEVO, ${savedName.toUpperCase()}` });
+      } else {
+        vibrate([50, 50, 50]);
+        toast({ variant: "destructive", title: "ERROR DE ACCESO", description: "NOMBRE O CONTRASEÑA INCORRECTOS" });
+      }
     }
-  }, [nameInput, passInput, toast]);
+  }, [nameInput, passInput, hasAccount, toast]);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    clearSession();
     setNameInput('');
     setPassInput('');
-    setOnboardingMode('login');
     vibrate(50);
   };
 
@@ -259,10 +272,10 @@ export default function Home() {
           
           <div className="space-y-2">
             <h1 className="text-5xl font-black tracking-tighter uppercase italic leading-tight">
-              {onboardingMode === 'signup' ? 'BIENVENIDO' : 'INICIAR SESIÓN'}
+              {!hasAccount ? 'BIENVENIDO' : 'INICIAR SESIÓN'}
             </h1>
             <p className="text-white/70 font-black uppercase tracking-widest text-[10px]">
-              {onboardingMode === 'signup' ? 'CREA TU PERFIL DE HOGAR' : `HOGAR DE ${homeOwner.toUpperCase()}`}
+              {!hasAccount ? 'CREA TU PERFIL DE HOGAR' : `HOGAR DE ${homeOwner.toUpperCase()}`}
             </p>
           </div>
 
@@ -297,26 +310,12 @@ export default function Home() {
             </div>
             
             <Button 
-              onClick={onboardingMode === 'signup' ? handleSignUp : handleLogin} 
+              onClick={handleAccess} 
               disabled={!nameInput.trim() || !passInput.trim()}
               className="w-full h-16 rounded-2xl bg-white text-primary hover:bg-white/90 font-black uppercase text-sm tracking-widest shadow-2xl action-button"
             >
-              {onboardingMode === 'signup' ? 'COMENZAR' : 'ENTRAR'} <ArrowRight size={20} className="ml-2" />
+              {!hasAccount ? 'COMENZAR' : 'ENTRAR'} <ArrowRight size={20} className="ml-2" />
             </Button>
-
-            <button 
-              onClick={() => {
-                vibrate(10);
-                setOnboardingMode(prev => prev === 'signup' ? 'login' : 'signup');
-                setNameInput('');
-                setPassInput('');
-              }}
-              className="text-[10px] font-black uppercase tracking-widest text-white/50 hover:text-white transition-colors"
-            >
-              {onboardingMode === 'signup' 
-                ? '¿YA TIENES UNA SESIÓN? INICIA AQUÍ' 
-                : '¿NO TIENES CUENTA? REGÍSTRATE AQUÍ'}
-            </button>
           </div>
           
           {isInstallable && (

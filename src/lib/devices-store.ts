@@ -11,6 +11,7 @@ export interface Device {
 const STORAGE_KEY = 'luz-control-devices-v2-independent';
 const OWNER_KEY = 'luz-control-owner-name';
 const PASSWORD_KEY = 'luz-control-owner-password';
+const SESSION_KEY = 'luz-control-session-active';
 
 export const getStoredDevices = (): Device[] => {
   if (typeof window === 'undefined') return [];
@@ -48,8 +49,21 @@ export const saveHomeOwnerPassword = (password: string) => {
   localStorage.setItem(PASSWORD_KEY, password);
 };
 
+export const setSessionActive = (active: boolean) => {
+  if (typeof window === 'undefined') return;
+  if (active) {
+    localStorage.setItem(SESSION_KEY, 'true');
+  } else {
+    localStorage.removeItem(SESSION_KEY);
+  }
+};
+
+export const isSessionActive = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem(SESSION_KEY) === 'true';
+};
+
 export const clearSession = () => {
   if (typeof window === 'undefined') return;
-  // No eliminamos los dispositivos, solo la sesión activa "lógica" si fuera necesario
-  // Para este prototipo, el login se maneja en el estado de la página
+  localStorage.removeItem(SESSION_KEY);
 };
