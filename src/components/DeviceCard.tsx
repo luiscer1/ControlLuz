@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Power, Trash2, Edit2, Loader2, MoreVertical, Wifi, Cpu, AlertCircle } from 'lucide-react';
+import { Power, Trash2, Edit2, Loader2, MoreVertical, Wifi, Cpu, AlertCircle, RefreshCw } from 'lucide-react';
 import { Device } from '@/lib/devices-store';
 import { vibrate } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
@@ -149,11 +149,19 @@ export const DeviceCard = React.memo(function DeviceCard({
         </div>
 
         {isOnline === false && (
-          <div className="p-4 rounded-2xl flex items-start gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
-            <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
-            <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-              NO SE PUDO CONECTAR. REVISA LA IP Y QUE ESTÉS EN LA MISMA RED WIFI.
-            </p>
+          <div className="p-4 rounded-2xl flex flex-col gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
+            <div className="flex items-start gap-3">
+              <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
+              <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
+                NO SE PUDO CONECTAR. REVISA LA IP Y QUE ESTÉS EN LA MISMA RED WIFI.
+              </p>
+            </div>
+            <button 
+              onClick={(e) => { e.stopPropagation(); checkStatus(); }}
+              className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+            >
+              <RefreshCw size={12} className="animate-spin-slow" /> RECONECTAR
+            </button>
           </div>
         )}
 
