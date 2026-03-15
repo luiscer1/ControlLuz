@@ -1,27 +1,9 @@
+'use client';
+
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Script from 'next/script';
-
-export const metadata: Metadata = {
-  title: 'Luz Control',
-  description: 'Control de Iluminación Inteligente - Asistencia Motriz',
-  manifest: '/manifest.json',
-  icons: {
-    icon: '/favicon.ico?v=1',
-    shortcut: '/favicon.ico?v=1',
-    apple: '/favicon.ico?v=1',
-  },
-};
-
-export const viewport: Viewport = {
-  width: 'device-width',
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: 'cover',
-  themeColor: '#1A73E8',
-};
 
 export default function RootLayout({
   children,

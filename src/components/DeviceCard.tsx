@@ -153,7 +153,7 @@ export const DeviceCard = React.memo(function DeviceCard({
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-                NO SE PUDO CONECTAR. REVISA LA IP Y QUE ESTÉS EN LA MISMA RED WIFI.
+                NO SE PUDO CONECTAR. REVISAR LA IP DE LA PLACA Y QUE ESTES EN LA MISMA RED WIFI.
               </p>
             </div>
             <button 
