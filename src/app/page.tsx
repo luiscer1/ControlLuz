@@ -73,7 +73,7 @@ export default function Home() {
 
   // PWA states
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [showInstallButton, setShowInstallButton] = useState(true);
+  const [showInstallButton, setShowInstallButton] = useState(false);
 
   const { toast } = useToast();
 
@@ -82,14 +82,20 @@ export default function Home() {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      setShowInstallButton(true);
       console.log('Evento beforeinstallprompt capturado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Ocultar si ya está instalada
-    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
+    // Ocultar si ya está instalada o es standalone
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    if (isStandalone) {
       setShowInstallButton(false);
+    } else {
+      // Mostrar ayuda de instalación por defecto en móviles si no está instalada
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) setShowInstallButton(true);
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handler);
@@ -125,7 +131,7 @@ export default function Home() {
       setHomeOwner(ownerName);
     }
 
-    // Verificar si hay una sesión activa previa para evitar re-login al refrescar
+    // Verificar si hay una sesión activa previa
     if (isSessionActive()) {
       setIsAuthenticated(true);
     }
@@ -138,56 +144,6 @@ export default function Home() {
     if (!isInitialized) return;
     saveDevices(devices);
   }, [devices, isInitialized]);
-
-  const handleAddDevice = useCallback((data: Omit<Device, 'id' | 'status'>) => {
-    const newDevice: Device = {
-      id: Math.random().toString(36).substring(2, 15),
-      ...data,
-      status: false,
-    };
-    
-    setIsAddOpen(false);
-    
-    setTimeout(() => {
-      startTransition(() => {
-        setDevices(prev => [...prev, newDevice]);
-        vibrate([20, 50, 20]);
-        toast({ title: "ZONA VINCULADA", description: data.name.toUpperCase() });
-      });
-    }, 100);
-  }, [toast]);
-
-  const handleUpdateDevice = useCallback((id: string, updates: Partial<Device>) => {
-    setDevices(prev => prev.map(d => d.id === id ? { ...d, ...updates } : d));
-  }, []);
-
-  const handleDeleteDevice = useCallback((id: string) => {
-    startTransition(() => {
-      setDevices(prev => prev.filter(d => d.id !== id));
-      vibrate(50);
-      toast({ title: "ZONA ELIMINADA" });
-    });
-  }, [toast]);
-
-  const handleStartEdit = useCallback((device: Device) => {
-    setDeviceToEdit(device);
-    setIsEditOpen(true);
-    vibrate(10);
-  }, []);
-
-  const handleSaveEdit = useCallback((data: Omit<Device, 'id' | 'status'>) => {
-    if (!deviceToEdit) return;
-    const targetId = deviceToEdit.id;
-    setIsEditOpen(false);
-    setTimeout(() => {
-      startTransition(() => {
-        setDevices(prev => prev.map(d => d.id === targetId ? { ...d, ...data } : d));
-        setDeviceToEdit(null);
-        vibrate(20);
-        toast({ title: "ACTUALIZADO" });
-      });
-    }, 150);
-  }, [deviceToEdit, toast]);
 
   const handleAccess = useCallback(() => {
     const savedName = getHomeOwnerName();
@@ -318,17 +274,6 @@ export default function Home() {
               {!hasAccount ? 'COMENZAR' : 'ENTRAR'} <ArrowRight size={20} className="ml-2" />
             </Button>
           </div>
-
-          {showInstallButton && (
-            <div className="space-y-4">
-              <button 
-                onClick={handleInstallClick}
-                className="flex items-center gap-3 mx-auto px-8 py-4 rounded-full bg-white/20 text-white font-black text-[11px] uppercase tracking-[0.2em] border border-white/30 backdrop-blur-md shadow-xl animate-pulse hover:bg-white/30 transition-all"
-              >
-                <Download size={16} /> INSTALAR APP (AYUDA iOS)
-              </button>
-            </div>
-          )}
         </div>
       </div>
     );
