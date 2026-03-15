@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef, useTransition } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { 
   Device, 
   getStoredDevices, 
@@ -33,7 +33,9 @@ import {
   ArrowRight,
   Lock,
   LogOut,
-  Smartphone
+  Smartphone,
+  Check,
+  X
 } from 'lucide-react';
 import {
   Dialog,
@@ -52,7 +54,8 @@ export default function Home() {
   
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isOwnerOpen, setIsOwnerOpen] = useState(false);
+  const [isInstallOpen, setIsInstallOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [hasAccount, setHasAccount] = useState(false);
@@ -270,7 +273,7 @@ export default function Home() {
             <div className="bg-primary h-14 w-14 rounded-2xl flex items-center justify-center shadow-xl shadow-primary/30">
               <Zap className="text-white fill-current" size={28} />
             </div>
-            <div onClick={() => { setIsOwnerOpen(true); vibrate(10); }} className="cursor-pointer group">
+            <div onClick={() => { setIsProfileOpen(true); vibrate(10); }} className="cursor-pointer group">
               <h1 className="text-2xl font-black tracking-tighter leading-none uppercase italic group-hover:text-primary transition-colors">LUZ CONTROL</h1>
               <p className="text-[10px] uppercase tracking-widest font-black text-slate-500 flex items-center gap-1.5 mt-1">
                 <User size={12} className="text-primary" /> HOGAR DE {homeOwner.toUpperCase()}
@@ -279,8 +282,8 @@ export default function Home() {
           </div>
 
           <div className="flex gap-2">
-            <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
-              <Smartphone size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">AYUDA iOS</span>
+            <Button onClick={() => setIsInstallOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
+              <Smartphone size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">INSTALAR EN IOS</span>
             </Button>
             <Button onClick={handleLogout} variant="ghost" className="rounded-2xl h-14 w-14 p-0 bg-white shadow-sm text-slate-400 hover:text-rose-500">
               <LogOut size={24} />
@@ -333,47 +336,76 @@ export default function Home() {
         </div>
       </main>
 
-      <Dialog open={isOwnerOpen} onOpenChange={setIsOwnerOpen}>
+      <Dialog open={isInstallOpen} onOpenChange={setIsInstallOpen}>
         <DialogContent className="sm:max-w-md rounded-[3rem] bg-white p-10 border-none overflow-y-auto max-h-[90vh]">
-          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">PERFIL Y AYUDA</DialogTitle></DialogHeader>
-          <div className="space-y-8 pt-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">NOMBRE DEL HOGAR</label>
-              <Input value={homeOwner} onChange={(e) => setHomeOwner(e.target.value)} className="h-16 rounded-2xl font-black text-lg px-5 uppercase" />
+          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">INSTALAR EN IOS</DialogTitle></DialogHeader>
+          <div className="space-y-6 pt-4">
+            <div className="flex items-center gap-2 text-primary">
+              <Smartphone size={18} />
+              <h3 className="text-sm font-black uppercase tracking-widest">PASOS PARA iPHONE</h3>
             </div>
             
-            <div className="space-y-4 pt-4 border-t border-slate-100">
-              <div className="flex items-center gap-2 text-primary">
-                <Smartphone size={18} />
-                <h3 className="text-sm font-black uppercase tracking-widest">AYUDA iPHONE (iOS)</h3>
-              </div>
-              
-              <div className="space-y-3 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
-                <p className="text-[11px] font-bold text-slate-700 leading-relaxed uppercase">
-                  PARA INSTALAR LA APP EN TU PANTALLA DE INICIO:
-                </p>
-                <ol className="space-y-2">
-                  <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
-                    <span className="bg-primary text-white h-4 w-4 rounded-full flex items-center justify-center shrink-0">1</span>
-                    TOCA EL BOTÓN "COMPARTIR" (CUADRADO CON FLECHA).
-                  </li>
-                  <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
-                    <span className="bg-primary text-white h-4 w-4 rounded-full flex items-center justify-center shrink-0">2</span>
-                    BUSCA "AÑADIR A PANTALLA DE INICIO".
-                  </li>
-                  <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
-                    <span className="bg-primary text-white h-4 w-4 rounded-full flex items-center justify-center shrink-0">3</span>
-                    DALE A "AÑADIR" ARRIBA A LA DERECHA.
-                  </li>
-                </ol>
-              </div>
-              
-              <p className="text-[9px] font-black text-slate-400 leading-relaxed uppercase text-center px-4">
-                UNA VEZ AÑADIDA, APARECERÁ EL ICONO EN TU TELÉFONO Y SE ABRIRÁ SIN LA BARRA DEL NAVEGADOR.
+            <div className="space-y-4 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+              <p className="text-[11px] font-bold text-slate-700 leading-relaxed uppercase">
+                AÑADE LUZ CONTROL A TU PANTALLA DE INICIO:
               </p>
+              <ol className="space-y-3">
+                <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
+                  <span className="bg-primary text-white h-5 w-5 rounded-full flex items-center justify-center shrink-0 font-bold">1</span>
+                  TOCA EL BOTÓN "COMPARTIR" (CUADRADO CON FLECHA) EN SAFARI.
+                </li>
+                <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
+                  <span className="bg-primary text-white h-5 w-5 rounded-full flex items-center justify-center shrink-0 font-bold">2</span>
+                  BUSCA "AÑADIR A PANTALLA DE INICIO".
+                </li>
+                <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
+                  <span className="bg-primary text-white h-5 w-5 rounded-full flex items-center justify-center shrink-0 font-bold">3</span>
+                  DALE A "AÑADIR" ARRIBA A LA DERECHA.
+                </li>
+              </ol>
             </div>
+            
+            <p className="text-[9px] font-black text-slate-400 leading-relaxed uppercase text-center px-4">
+              UNA VEZ INSTALADA, SE ABRIRÁ A PANTALLA COMPLETA COMO UNA APP REAL.
+            </p>
 
-            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase shadow-xl mt-4">GUARDAR CAMBIOS</Button>
+            <Button onClick={() => setIsInstallOpen(false)} className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase shadow-xl mt-4">ENTENDIDO</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isProfileOpen} onOpenChange={setIsProfileOpen}>
+        <DialogContent className="sm:max-w-md rounded-[3rem] bg-white p-10 border-none">
+          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">EDITAR PERFIL</DialogTitle></DialogHeader>
+          <div className="space-y-6 pt-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">NOMBRE DEL HOGAR</label>
+              <Input 
+                value={homeOwner} 
+                onChange={(e) => setHomeOwner(e.target.value)} 
+                className="h-16 rounded-2xl font-black text-lg px-5 uppercase" 
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Button 
+                onClick={() => { 
+                  saveHomeOwnerName(homeOwner); 
+                  setIsProfileOpen(false); 
+                  vibrate(20); 
+                  toast({ title: "PERFIL ACTUALIZADO" }); 
+                }} 
+                className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase shadow-xl"
+              >
+                <Check className="mr-2" size={18} /> GUARDAR CAMBIOS
+              </Button>
+              <Button 
+                variant="ghost" 
+                onClick={() => setIsProfileOpen(false)} 
+                className="w-full h-12 rounded-2xl text-slate-400 font-bold uppercase text-[10px]"
+              >
+                <X className="mr-2" size={14} /> CANCELAR
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>

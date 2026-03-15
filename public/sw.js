@@ -1,14 +1,19 @@
 
-// Service Worker básico para permitir la instalación en dispositivos
-self.addEventListener('install', (event) => {
-  self.skipWaiting();
-});
+// Service Worker básico para permitir la instalabilidad PWA
+const CACHE_NAME = 'luz-control-cache-v1';
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(clients.claim());
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(['/']);
+    })
+  );
 });
 
 self.addEventListener('fetch', (event) => {
-  // Estrategia de red solamente para evitar problemas con la cache en desarrollo
-  event.respondWith(fetch(event.request));
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
