@@ -82,7 +82,7 @@ export default function Home() {
       e.preventDefault();
       setDeferredPrompt(e);
       setIsInstallable(true);
-      console.log('App is installable');
+      console.log('Evento de instalación capturado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -99,7 +99,7 @@ export default function Home() {
     if (!deferredPrompt) {
       toast({ 
         title: "SOPORTE DE INSTALACIÓN", 
-        description: "PARA iOS: TOCA 'COMPARTIR' Y LUEGO 'AÑADIR A PANTALLA DE INICIO'" 
+        description: "EN ANDROID: REVISA EL MENÚ DE CHROME. EN iOS: TOCA COMPARTIR -> AÑADIR A INICIO." 
       });
       return;
     }
