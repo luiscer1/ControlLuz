@@ -1,13 +1,41 @@
-Nombre de la aplicación : Luz Control
-Características principales:
-Detección de dispositivos: Escanea automáticamente la red local para encontrar y mostrar los dispositivos ESP32/ESP8266 disponibles mediante solicitudes HTTP locales.
-Administración de dispositivos (Agregar, Editar, Eliminar y Persistencia): Permite a los usuarios agregar nuevos dispositivos manualmente (mediante IP) y editar (cambiar nombre o IP) o eliminar dispositivos existentes de la lista mediante un menú que se activa al mantener pulsado en la pantalla principal. La lista de dispositivos se almacena de forma persistente mediante AsyncStorage.
-Control básico de la iluminación: Envía comandos para encender/apagar las luces conectadas y ajustar los niveles de brillo, si el dispositivo lo admite, comunicándose mediante solicitudes HTTP locales.
-Visualización del estado en tiempo real: Muestra el estado actual (encendido/apagado, brillo) de todos los dispositivos de iluminación conectados y activos, actualizado en tiempo real mediante sondeo HTTP local.
-Guía de configuración integrada: La aplicación incluye una sección de "Guía" con código de ejemplo para dispositivos ESP32/ESP8266, que permite a los usuarios copiarlo fácilmente al portapapeles. Además, ofrece instrucciones claras de 4 pasos (Conectar, Cargar, Monitor serie, Agregar IP) para la configuración inicial del dispositivo en el IDE de Arduino. Esto garantiza que los usuarios puedan preparar sus dispositivos ESP sin salir de la aplicación.
-Pautas de estilo:
-La paleta es ligera y moderna, diseñada para transmitir claridad y control tecnológico, con alto contraste para una mejor accesibilidad. El color principal es un azul vibrante (#1A73E8), elegido para evocar precisión y una interfaz limpia. El fondo es un gris azulado claro muy sutil, casi blanco (#F5F7FA), que proporciona un lienzo amplio y limpio. Un morado expresivo (#6C3DEB) sirve de acento, ofreciendo contraste y señalando los elementos interactivos clave.
-Tipografía para el cuerpo del texto y los titulares: «Inter» (sans-serif) por su estética moderna, objetiva y neutra, que garantiza una excelente legibilidad y una apariencia elegante en toda la aplicación. Se prioriza una presentación legible y distinguida.
-Utilice iconos claros y concisos que representen acciones comunes del hogar inteligente y estados de los dispositivos (por ejemplo, iconos de bombillas, interruptores de encendido/apagado, controles deslizantes de brillo). Priorice los diseños sencillos basados ​​en líneas para lograr un aspecto minimalista y moderno.
-Implementa un diseño limpio basado en tarjetas para mostrar los dispositivos, asegurando que el estado y los controles de cada uno sean fácilmente accesibles y visualmente diferenciados. Mantén márgenes y rellenos uniformes para una experiencia de usuario equilibrada e intuitiva. El diseño general debe ser minimalista y legible.
-Incorpora animaciones sutiles de retroalimentación para las pulsaciones de botones, los interruptores y los cambios de estado de la conexión, con el fin de mejorar la interacción del usuario e indicar la capacidad de respuesta del sistema. 
+Documentación de Proyecto: Luz Control
+Luz Control es una solución de software diseñada para la gestión centralizada y el control de iluminación inteligente basado en microcontroladores ESP32 y ESP8266, priorizando la autonomía del usuario y la comunicación local eficiente.
+
+🛠 Características Funcionales
+1. Gestión Inteligente de Dispositivos
+Auto-Discovery: Escaneo automático de la red local (LAN) para la detección de nodos ESP mediante peticiones HTTP.
+
+Administración CRUD: Interfaz completa para agregar (vía IP), editar y eliminar dispositivos.
+
+Persistencia de Datos: Almacenamiento local de configuraciones mediante AsyncStorage, garantizando que la lista de dispositivos se mantenga tras el cierre de la app.
+
+2. Centro de Control de Iluminación
+Protocolo de Comunicación: Ejecución de comandos mediante solicitudes HTTP locales (encendido/apagado y niveles de brillo).
+
+Monitoreo en Tiempo Real: Visualización dinámica del estado de cada luminaria mediante sondeo (polling) constante para reflejar cambios inmediatos.
+
+3. Asistente de Configuración Integrado
+Onboarding para Desarrolladores: Guía paso a paso (Conectar, Cargar, Monitor serie, Agregar IP) integrada en la interfaz.
+
+Code-Sharing: Sección de ejemplos de código listos para copiar y cargar en el IDE de Arduino, facilitando la implementación de nuevos nodos sin salir de la aplicación.
+
+🎨 Identidad Visual y UI/UX
+Concepto de Diseño
+La interfaz sigue una estética tecnológica, minimalista y de alto contraste, enfocada en la legibilidad y la precisión operativa.
+
+Paleta de Colores:
+
+Representa precisión y limpieza.
+
+Identifica elementos interactivos clave.
+
+Proporciona un lienzo limpio y moderno.
+
+Tipografía: Inter (Sans-serif) por su naturaleza neutra y excelente legibilidad en pantallas móviles.
+
+Componentes y Experiencia
+Layout basado en Tarjetas: Los dispositivos se organizan en contenedores visualmente diferenciados para facilitar la interacción rápida.
+
+Iconografía Lineal: Uso de símbolos concisos (bombillas, sliders, interruptores) para una interpretación intuitiva de acciones.
+
+Micro-interacciones: Retroalimentación háptica y animaciones sutiles en pulsaciones y cambios de estado, mejorando la percepción de respuesta del sistema.
