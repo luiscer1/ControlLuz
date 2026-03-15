@@ -83,7 +83,7 @@ export default function Home() {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      console.log('Evento beforeinstallprompt capturado');
+      console.log('Evento de instalación detectado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -101,13 +101,13 @@ export default function Home() {
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         setDeferredPrompt(null);
-        toast({ title: "INSTALANDO...", description: "CREANDO ACCESO DIRECTO EN TU INICIO" });
+        toast({ title: "INSTALANDO...", description: "CREANDO ACCESO DIRECTO" });
       }
     } else {
       toast({ 
-        title: "SISTEMA NO DISPONIBLE", 
-        description: "EL NAVEGADOR NO PERMITE LA INSTALACIÓN DIRECTA AHORA MISMO. PRUEBA USANDO CHROME.",
-        variant: "destructive"
+        title: "INSTALACIÓN MANUAL", 
+        description: "TOCA LOS 3 PUNTOS DEL NAVEGADOR Y SELECCIONA 'INSTALAR APLICACIÓN' O 'AÑADIR A PANTALLA DE INICIO'.",
+        duration: 8000
       });
     }
   };
@@ -116,7 +116,7 @@ export default function Home() {
     vibrate(20);
     toast({ 
       title: "GUÍA PARA iPHONE", 
-      description: "1. TOCA EL BOTÓN 'COMPARTIR' (CUADRADO CON FLECHA). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
+      description: "1. TOCA EL BOTÓN 'COMPARTIR' (CUADRADO CON FLECHA ABAJO). 2. BUSCA 'AÑADIR A PANTALLA DE INICIO'.",
       duration: 10000
     });
   };
@@ -329,8 +329,8 @@ export default function Home() {
 
           <div className="flex gap-2">
             {!isAppInstalled && (
-              <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="hidden md:flex rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button">
-                <Download size={18} className="mr-2" /> INSTALAR
+              <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
+                <Download size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">INSTALAR</span>
               </Button>
             )}
             <Button onClick={handleLogout} variant="ghost" className="rounded-2xl h-14 w-14 p-0 bg-white shadow-sm text-slate-400 hover:text-rose-500">
@@ -385,7 +385,7 @@ export default function Home() {
       </main>
 
       <Dialog open={isOwnerOpen} onOpenChange={setIsOwnerOpen}>
-        <DialogContent className="sm:max-w-md rounded-[3rem] bg-white p-10 border-none">
+        <DialogContent className="sm:max-w-md rounded-[3rem] bg-white p-10 border-none overflow-y-auto max-h-[90vh]">
           <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">PERFIL Y AYUDA</DialogTitle></DialogHeader>
           <div className="space-y-8 pt-4">
             <div className="space-y-2">
@@ -393,28 +393,34 @@ export default function Home() {
               <Input value={homeOwner} onChange={(e) => setHomeOwner(e.target.value)} className="h-16 rounded-2xl font-black text-lg px-5 uppercase" />
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-4 pt-4 border-t border-slate-100">
               <div className="flex items-center gap-2 text-primary">
                 <Smartphone size={18} />
                 <h3 className="text-sm font-black uppercase tracking-widest">INSTALACIÓN EN MÓVIL</h3>
               </div>
               
-              <div className="grid grid-cols-1 gap-3">
-                <Button onClick={handleInstallAndroid} className="h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-[11px] flex items-center justify-center gap-3">
-                  <Smartphone size={20} /> INSTALAR EN ANDROID
-                </Button>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-2">ANDROID / CHROME</p>
+                  <Button onClick={handleInstallAndroid} className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-[11px] flex items-center justify-center gap-3 action-button">
+                    <Smartphone size={20} /> INSTALAR EN ANDROID
+                  </Button>
+                </div>
                 
-                <Button onClick={handleShowIosHelp} variant="outline" className="h-16 rounded-2xl border-2 border-primary/20 text-primary font-black uppercase text-[11px] flex items-center justify-center gap-3">
-                  <SmartphoneIos size={20} /> AYUDA PARA iOS (iPHONE)
-                </Button>
+                <div className="space-y-2">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-2">iPHONE / SAFARI</p>
+                  <Button onClick={handleShowIosHelp} variant="outline" className="w-full h-16 rounded-2xl border-2 border-primary/20 text-primary font-black uppercase text-[11px] flex items-center justify-center gap-3 action-button">
+                    <SmartphoneIos size={20} /> AYUDA PARA iOS
+                  </Button>
+                </div>
               </div>
               
-              <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase text-center px-4">
+              <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase text-center px-4 mt-2">
                 INSTALA LA APP PARA CONTROLAR TUS LUCES AL INSTANTE DESDE TU PANTALLA DE INICIO.
               </p>
             </div>
 
-            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase shadow-xl">GUARDAR CAMBIOS</Button>
+            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase shadow-xl mt-4">GUARDAR CAMBIOS</Button>
           </div>
         </DialogContent>
       </Dialog>
