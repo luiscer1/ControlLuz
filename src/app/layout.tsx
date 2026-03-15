@@ -1,7 +1,11 @@
+
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import Script from 'next/script';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+
+const appIcon = PlaceHolderImages.find(img => img.id === 'app-icon')?.imageUrl || 'https://picsum.photos/seed/luzcontrol-bulb/512/512';
 
 export const metadata: Metadata = {
   title: 'Luz Control',
@@ -14,6 +18,11 @@ export const metadata: Metadata = {
   },
   formatDetection: {
     telephone: false,
+  },
+  icons: {
+    icon: appIcon,
+    shortcut: appIcon,
+    apple: appIcon,
   },
 };
 
@@ -41,11 +50,14 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        {/* Icono específico para iOS (Apple Touch Icon) */}
-        <link rel="apple-touch-icon" href="https://picsum.photos/seed/luzcontrol-icon/192/192" />
-        <link rel="apple-touch-icon" sizes="152x152" href="https://picsum.photos/seed/luzcontrol-icon/152/152" />
-        <link rel="apple-touch-icon" sizes="180x180" href="https://picsum.photos/seed/luzcontrol-icon/180/180" />
-        <link rel="apple-touch-icon" sizes="167x167" href="https://picsum.photos/seed/luzcontrol-icon/167/167" />
+        
+        {/* Favicon y Iconos de App */}
+        <link rel="icon" type="image/png" href={appIcon} />
+        <link rel="apple-touch-icon" href={appIcon} />
+        <link rel="apple-touch-icon" sizes="152x152" href={appIcon} />
+        <link rel="apple-touch-icon" sizes="180x180" href={appIcon} />
+        <link rel="apple-touch-icon" sizes="167x167" href={appIcon} />
+        
         <meta name="theme-color" content="#2563eb" />
       </head>
       <body className="font-body antialiased bg-[#F4F4F9] text-foreground" suppressHydrationWarning>
