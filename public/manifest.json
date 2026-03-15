@@ -1,7 +1,7 @@
 {
   "name": "Luz Control",
   "short_name": "LuzControl",
-  "description": "Control de iluminación local para asistencia motriz",
+  "description": "Asistencia Motriz - Control de entorno local",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F4F4F9",
