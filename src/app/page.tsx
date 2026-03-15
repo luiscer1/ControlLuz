@@ -32,7 +32,6 @@ import {
   ArrowRight,
   Lock,
   LogOut,
-  Download,
   Smartphone,
   SmartphoneIcon as SmartphoneIos
 } from 'lucide-react';
@@ -72,44 +71,15 @@ export default function Home() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const touchStartRef = useRef(0);
 
-  // PWA states
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  // PWA state
   const [isAppInstalled, setIsAppInstalled] = useState(false);
 
   const { toast } = useToast();
 
   useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-      console.log('Evento beforeinstallprompt capturado');
-    };
-
-    window.addEventListener('beforeinstallprompt', handler);
-
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone;
+    const isStandalone = typeof window !== 'undefined' && (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone);
     if (isStandalone) setIsAppInstalled(true);
-
-    return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
-
-  const handleInstallAndroid = async () => {
-    vibrate(20);
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        setDeferredPrompt(null);
-        toast({ title: "INSTALANDO...", description: "AÑADIENDO A PANTALLA DE INICIO" });
-      }
-    } else {
-      toast({ 
-        title: "INSTALACIÓN MANUAL", 
-        description: "TOCA EL MENÚ (⋮) DE CHROME Y SELECCIONA 'INSTALAR APLICACIÓN' O 'AÑADIR A PANTALLA DE INICIO'.",
-        duration: 10000
-      });
-    }
-  };
 
   const handleShowIosHelp = () => {
     vibrate(20);
@@ -329,7 +299,7 @@ export default function Home() {
           <div className="flex gap-2">
             {!isAppInstalled && (
               <Button onClick={() => setIsOwnerOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
-                <Download size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">INSTALAR</span>
+                <SmartphoneIos size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">AYUDA iOS</span>
               </Button>
             )}
             <Button onClick={handleLogout} variant="ghost" className="rounded-2xl h-14 w-14 p-0 bg-white shadow-sm text-slate-400 hover:text-rose-500">
@@ -394,32 +364,39 @@ export default function Home() {
             
             <div className="space-y-4 pt-4 border-t border-slate-100">
               <div className="flex items-center gap-2 text-primary">
-                <Smartphone size={18} />
-                <h3 className="text-sm font-black uppercase tracking-widest">INSTALACIÓN EN MÓVIL</h3>
+                <SmartphoneIos size={18} />
+                <h3 className="text-sm font-black uppercase tracking-widest">AYUDA iPHONE (iOS)</h3>
               </div>
               
-              <div className="grid grid-cols-1 gap-4">
-                <div className="space-y-2">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-2">ANDROID / CHROME</p>
-                  <Button onClick={handleInstallAndroid} className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase text-[11px] flex items-center justify-center gap-3 action-button">
-                    <Smartphone size={20} /> INSTALAR EN ANDROID
-                  </Button>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-2">iPHONE / SAFARI</p>
-                  <Button onClick={handleShowIosHelp} variant="outline" className="w-full h-16 rounded-2xl border-2 border-primary/20 text-primary font-black uppercase text-[11px] flex items-center justify-center gap-3 action-button">
-                    <SmartphoneIos size={20} /> AYUDA PARA iOS
-                  </Button>
-                </div>
+              <div className="space-y-3 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
+                <p className="text-[11px] font-bold text-slate-700 leading-relaxed uppercase">
+                  PARA INSTALAR LA APP EN TU PANTALLA DE INICIO:
+                </p>
+                <ol className="space-y-2">
+                  <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
+                    <span className="bg-primary text-white h-4 w-4 rounded-full flex items-center justify-center shrink-0">1</span>
+                    TOCA EL BOTÓN "COMPARTIR" (CUADRADO CON FLECHA).
+                  </li>
+                  <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
+                    <span className="bg-primary text-white h-4 w-4 rounded-full flex items-center justify-center shrink-0">2</span>
+                    BUSCA "AÑADIR A PANTALLA DE INICIO".
+                  </li>
+                  <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
+                    <span className="bg-primary text-white h-4 w-4 rounded-full flex items-center justify-center shrink-0">3</span>
+                    DALE A "AÑADIR" ARRIBA A LA DERECHA.
+                  </li>
+                </ol>
+                <Button onClick={handleShowIosHelp} className="w-full h-12 rounded-xl bg-primary text-white font-black uppercase text-[9px] mt-2 action-button shadow-md">
+                   PROBAR GUÍA VISUAL
+                </Button>
               </div>
               
-              <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase text-center px-4 mt-2">
-                AL INSTALAR LA APP APARECERÁ EL ICONO EN TU TELÉFONO Y SE ABRIRÁ A PANTALLA COMPLETA.
+              <p className="text-[9px] font-black text-slate-400 leading-relaxed uppercase text-center px-4">
+                UNA VEZ AÑADIDA, APARECERÁ EL ICONO EN TU TELÉFONO Y SE ABRIRÁ SIN LA BARRA DEL NAVEGADOR.
               </p>
             </div>
 
-            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase shadow-xl mt-4">GUARDAR CAMBIOS</Button>
+            <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase shadow-xl mt-4">GUARDAR CAMBIOS</Button>
           </div>
         </DialogContent>
       </Dialog>
