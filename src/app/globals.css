@@ -39,7 +39,6 @@
     user-select: none;
     -webkit-user-select: none;
     overflow-x: hidden;
-    /* Soporte para áreas seguras de notch */
     padding-top: env(safe-area-inset-top);
   }
 }
@@ -62,7 +61,7 @@
 }
 
 ::-webkit-scrollbar {
-  width: 0px; /* Ocultar scrollbars en móvil */
+  width: 0px;
 }
 
 .safe-area-bottom {

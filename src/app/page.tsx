@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -63,7 +62,6 @@ export default function Home() {
   const [deviceToEdit, setDeviceToEdit] = useState<Device | null>(null);
   const [homeOwner, setHomeOwner] = useState('');
   
-  // Form states
   const [nameInput, setNameInput] = useState('');
   const [passInput, setPassInput] = useState('');
   

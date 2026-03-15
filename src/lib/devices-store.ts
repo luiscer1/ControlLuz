@@ -60,7 +60,6 @@ export const setSessionActive = (active: boolean) => {
 
 export const isSessionActive = (): boolean => {
   if (typeof window === 'undefined') return false;
-  // La sesión es persistente en localStorage
   return localStorage.getItem(SESSION_KEY) === 'true';
 };
 

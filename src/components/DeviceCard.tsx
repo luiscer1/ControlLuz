@@ -33,7 +33,6 @@ export const DeviceCard = React.memo(function DeviceCard({
   const isMounted = useRef(true);
   const checkInProgress = useRef(false);
 
-  // Función para verificar si el ESP32 está accesible en la red local
   const checkStatus = useCallback(async () => {
     if (checkInProgress.current) return;
     checkInProgress.current = true;
@@ -59,7 +58,6 @@ export const DeviceCard = React.memo(function DeviceCard({
 
   useEffect(() => {
     isMounted.current = true;
-    // Comprobación inicial con retraso aleatorio para no saturar la red si hay muchos dispositivos
     const initialTimeout = setTimeout(checkStatus, Math.random() * 1000);
     const interval = setInterval(checkStatus, 20000); 
     
@@ -70,7 +68,6 @@ export const DeviceCard = React.memo(function DeviceCard({
     };
   }, [checkStatus]);
 
-  // Forzar actualización si se activa el refresh manual
   useEffect(() => {
     if (refreshTrigger !== undefined && refreshTrigger > 0) checkStatus();
   }, [refreshTrigger, checkStatus]);
@@ -80,7 +77,6 @@ export const DeviceCard = React.memo(function DeviceCard({
     const previousStatus = device.status;
     const nextStatus = !previousStatus;
     
-    // Optimistic Update
     onUpdate(device.id, { status: nextStatus });
     setLoading(true);
     
@@ -99,7 +95,6 @@ export const DeviceCard = React.memo(function DeviceCard({
         vibrate(15);
       }
     } catch (e) {
-      // Revertir si falla la conexión
       if (isMounted.current) {
         onUpdate(device.id, { status: previousStatus });
         setIsOnline(false);

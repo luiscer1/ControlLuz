@@ -24,13 +24,11 @@ export function GuideTab() {
   const esp32Code = `#include <WiFi.h>
 #include <WebServer.h>
 
-// --- CONFIGURACIÓN DE RED ---
 const char* ssid = "TU_RED_WIFI";
 const char* password = "TU_PASS_WIFI";
 
 WebServer server(80);
 
-// --- PINES DE RELÉ ---
 const int PIN_R1 = 25; 
 const int PIN_R2 = 33;
 
@@ -51,7 +49,7 @@ void setup() {
 
   pinMode(PIN_R1, OUTPUT);
   pinMode(PIN_R2, OUTPUT);
-  digitalWrite(PIN_R1, HIGH); // Apagado por defecto (Lógica inversa)
+  digitalWrite(PIN_R1, HIGH); 
   digitalWrite(PIN_R2, HIGH);
   
   delay(1000); 
@@ -65,7 +63,6 @@ void setup() {
   
   Serial.println("\\n¡Conectado! La IP del ESP32 es: " + WiFi.localIP().toString());
   
-  // RUTAS DEL SERVIDOR
   server.on("/toggle1", HTTP_POST, handleToggle1);
   server.on("/toggle2", HTTP_POST, handleToggle2);
   
@@ -80,15 +77,13 @@ void loop() {
   const esp8266Code = `#include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
-// --- CONFIGURACIÓN DE RED ---
 const char* ssid = "TU_RED_WIFI";
 const char* password = "TU_PASS_WIFI";
 
 ESP8266WebServer server(80);
 
-// --- PINES DE RELÉ (Lógica D1/D2) ---
-const int PIN_R1 = 5; // D1
-const int PIN_R2 = 4; // D2
+const int PIN_R1 = 5; 
+const int PIN_R2 = 4; 
 
 void handleToggle1() {
   int estadoActual = digitalRead(PIN_R1);
@@ -121,7 +116,6 @@ void setup() {
   
   Serial.println("\\n¡Conectado! La IP del ESP8266 es: " + WiFi.localIP().toString());
   
-  // RUTAS DEL SERVIDOR
   server.on("/toggle1", HTTP_POST, handleToggle1);
   server.on("/toggle2", HTTP_POST, handleToggle2);
   

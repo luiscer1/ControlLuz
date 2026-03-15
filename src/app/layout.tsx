@@ -1,4 +1,3 @@
-
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -9,9 +8,9 @@ export const metadata: Metadata = {
   description: 'Control de Iluminación Inteligente - Asistencia Motriz',
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
+    icon: '/favicon.ico?v=1',
+    shortcut: '/favicon.ico?v=1',
+    apple: '/favicon.ico?v=1',
   },
 };
 
@@ -35,7 +34,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet" />
-        {/* Forzamos el uso del favicon local con un query string para evitar caché antigua */}
         <link rel="icon" href="/favicon.ico?v=1" sizes="any" />
         <link rel="apple-touch-icon" href="/favicon.ico?v=1" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -50,9 +48,7 @@ export default function RootLayout({
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
-                  console.log('ServiceWorker activo');
                 }).catch(function(err) {
-                  console.log('Error SW:', err);
                 });
               });
             }

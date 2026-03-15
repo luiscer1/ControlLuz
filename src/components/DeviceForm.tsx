@@ -35,7 +35,6 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
 
     const channelNumber = parseInt(channel);
 
-    // Validación de canal ocupado para la misma IP
     const conflict = devices.find(d => 
       d.ip.trim() === ip.trim() && 
       d.channel === channelNumber && 
