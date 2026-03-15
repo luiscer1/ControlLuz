@@ -1,11 +1,11 @@
 {
   "name": "Luz Control",
   "short_name": "LuzControl",
-  "description": "Asistencia Motriz - Control de entorno local",
+  "description": "Control local de iluminación inteligente",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F4F4F9",
-  "theme_color": "#221.2 83.2% 53.3%",
+  "theme_color": "#1A73E8",
   "icons": [
     {
       "src": "https://picsum.photos/seed/luzcontrol/192/192",
