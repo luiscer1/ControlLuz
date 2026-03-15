@@ -23,7 +23,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#F4F4F9',
+  themeColor: '#2563eb',
 };
 
 export default function RootLayout({
@@ -41,8 +41,12 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="apple-touch-icon" href="https://picsum.photos/seed/luzcontrol/192/192" />
-        <meta name="theme-color" content="#F4F4F9" />
+        {/* Icono específico para iOS (Apple Touch Icon) */}
+        <link rel="apple-touch-icon" href="https://picsum.photos/seed/luzcontrol-icon/192/192" />
+        <link rel="apple-touch-icon" sizes="152x152" href="https://picsum.photos/seed/luzcontrol-icon/152/152" />
+        <link rel="apple-touch-icon" sizes="180x180" href="https://picsum.photos/seed/luzcontrol-icon/180/180" />
+        <link rel="apple-touch-icon" sizes="167x167" href="https://picsum.photos/seed/luzcontrol-icon/167/167" />
+        <meta name="theme-color" content="#2563eb" />
       </head>
       <body className="font-body antialiased bg-[#F4F4F9] text-foreground" suppressHydrationWarning>
         {children}

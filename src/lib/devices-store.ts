@@ -2,9 +2,9 @@
 
 export interface Device {
   id: string;
-  name: string;      // Ej. "Sala"
-  ip: string;        // Ej. "192.168.1.15"
-  channel: number;   // 1 o 2 (el canal del relé físico)
+  name: string;      
+  ip: string;        
+  channel: number;   
   status: boolean;
 }
 
@@ -60,6 +60,7 @@ export const setSessionActive = (active: boolean) => {
 
 export const isSessionActive = (): boolean => {
   if (typeof window === 'undefined') return false;
+  // La sesión es persistente en localStorage
   return localStorage.getItem(SESSION_KEY) === 'true';
 };
 

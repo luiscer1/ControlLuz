@@ -1,4 +1,4 @@
-// Service Worker básico para cumplir con los requisitos de PWA de Chrome
+// Service Worker básico para cumplir requisitos de PWA (Instalación en Android)
 const CACHE_NAME = 'luz-control-cache-v1';
 
 self.addEventListener('install', (event) => {
@@ -10,6 +10,10 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Estrategia básica de red para asegurar que el contenido siempre esté actualizado
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+  // Estrategia: Network First con fallback a cache si fuera necesario
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
+    })
+  );
 });
