@@ -32,7 +32,8 @@ import {
   ArrowRight,
   Lock,
   LogOut,
-  Download
+  Download,
+  Info
 } from 'lucide-react';
 import {
   Dialog,
@@ -72,7 +73,7 @@ export default function Home() {
 
   // PWA states
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
+  const [showInstallButton, setShowInstallButton] = useState(true);
 
   const { toast } = useToast();
 
@@ -81,35 +82,35 @@ export default function Home() {
     const handler = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setIsInstallable(true);
-      console.log('Evento de instalación capturado');
+      console.log('Evento beforeinstallprompt capturado');
     };
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // Detectar si ya está instalada (standalone)
+    // Ocultar si ya está instalada
     if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
-      setIsInstallable(false);
+      setShowInstallButton(false);
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) {
+    vibrate(20);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallButton(false);
+      }
+    } else {
+      // Ayuda para iOS o navegadores que no soportan el prompt directo
       toast({ 
-        title: "SOPORTE DE INSTALACIÓN", 
-        description: "EN ANDROID: REVISA EL MENÚ DE CHROME. EN iOS: TOCA COMPARTIR -> AÑADIR A INICIO." 
+        title: "GUÍA DE INSTALACIÓN (iOS/SAFARI)", 
+        description: "1. TOCA EL BOTÓN 'COMPARTIR' (EL CUADRADO CON FLECHA). 2. SELECCIONA 'AÑADIR A PANTALLA DE INICIO'.",
+        duration: 8000
       });
-      return;
-    }
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      setIsInstallable(false);
-      setDeferredPrompt(null);
     }
   };
 
@@ -124,7 +125,7 @@ export default function Home() {
       setHomeOwner(ownerName);
     }
 
-    // Verificar si hay una sesión activa previa
+    // Verificar si hay una sesión activa previa para evitar re-login al refrescar
     if (isSessionActive()) {
       setIsAuthenticated(true);
     }
@@ -193,7 +194,7 @@ export default function Home() {
     const savedPass = getHomeOwnerPassword();
 
     if (!hasAccount) {
-      // Registro
+      // Registro inicial
       if (!nameInput.trim() || !passInput.trim()) return;
       saveHomeOwnerName(nameInput);
       saveHomeOwnerPassword(passInput);
@@ -204,7 +205,7 @@ export default function Home() {
       vibrate([20, 100]);
       toast({ title: "PERFIL CREADO", description: `BIENVENIDO, ${nameInput.toUpperCase()}` });
     } else {
-      // Login
+      // Login recurrente
       if (nameInput.trim().toUpperCase() === savedName.toUpperCase() && passInput === savedPass) {
         setIsAuthenticated(true);
         setSessionActive(true);
@@ -317,14 +318,16 @@ export default function Home() {
               {!hasAccount ? 'COMENZAR' : 'ENTRAR'} <ArrowRight size={20} className="ml-2" />
             </Button>
           </div>
-          
-          {isInstallable && (
-            <button 
-              onClick={handleInstallClick}
-              className="flex items-center gap-2 mx-auto px-6 py-3 rounded-full bg-white/10 text-white font-black text-[10px] uppercase tracking-[0.2em] border border-white/20 animate-bounce"
-            >
-              <Download size={14} /> INSTALAR APLICACIÓN
-            </button>
+
+          {showInstallButton && (
+            <div className="space-y-4">
+              <button 
+                onClick={handleInstallClick}
+                className="flex items-center gap-3 mx-auto px-8 py-4 rounded-full bg-white/20 text-white font-black text-[11px] uppercase tracking-[0.2em] border border-white/30 backdrop-blur-md shadow-xl animate-pulse hover:bg-white/30 transition-all"
+              >
+                <Download size={16} /> INSTALAR APP (AYUDA iOS)
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -362,7 +365,7 @@ export default function Home() {
           </div>
 
           <div className="flex gap-2">
-            {isInstallable && (
+            {showInstallButton && (
               <Button onClick={handleInstallClick} variant="outline" className="hidden md:flex rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button">
                 <Download size={18} className="mr-2" /> INSTALAR
               </Button>
@@ -432,11 +435,20 @@ export default function Home() {
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-2">NOMBRE DEL HOGAR</label>
               <Input value={homeOwner} onChange={(e) => setHomeOwner(e.target.value)} className="h-16 rounded-2xl font-black text-lg px-5 uppercase" />
             </div>
-            {isInstallable && (
-              <Button onClick={handleInstallClick} variant="outline" className="w-full h-16 rounded-2xl border-primary/20 text-primary font-black uppercase">
-                <Download size={18} className="mr-2" /> INSTALAR APP EN CELULAR
+            
+            <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100 space-y-3">
+              <div className="flex items-center gap-2 text-primary">
+                <Info size={16} />
+                <p className="text-[10px] font-black uppercase tracking-widest">AYUDA INSTALACIÓN</p>
+              </div>
+              <p className="text-[11px] font-medium text-slate-500 leading-relaxed uppercase">
+                PARA INSTALAR EN TU CELULAR: EN ANDORID USA EL BOTÓN DE ABAJO. EN iOS TOCA COMPARTIR Y "AÑADIR A INICIO".
+              </p>
+              <Button onClick={handleInstallClick} className="w-full h-14 rounded-xl bg-slate-900 text-white font-black text-[10px] uppercase">
+                <Download size={16} className="mr-2" /> INSTALAR APP
               </Button>
-            )}
+            </div>
+
             <Button onClick={() => { saveHomeOwnerName(homeOwner); setIsOwnerOpen(false); vibrate(20); toast({ title: "PERFIL ACTUALIZADO" }); }} className="w-full h-16 rounded-2xl bg-primary text-white font-black uppercase">GUARDAR CAMBIOS</Button>
           </div>
         </DialogContent>
