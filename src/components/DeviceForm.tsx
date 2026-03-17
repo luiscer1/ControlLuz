@@ -33,6 +33,17 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
     e.preventDefault();
     if (!name.trim() || !ip.trim()) return;
 
+    const ipRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    if (!ipRegex.test(ip.trim())) {
+      vibrate([50, 50, 50]);
+      toast({
+        variant: "destructive",
+        title: "IP INVÁLIDA",
+        description: "POR FAVOR INGRESA UNA DIRECCIÓN IP VÁLIDA (EJ: 192.168.1.10)",
+      });
+      return;
+    }
+
     const channelNumber = parseInt(channel);
 
     const conflict = devices.find(d => 
@@ -52,7 +63,7 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
     }
 
     vibrate([20, 60]);
-    onSubmit({ name, ip, channel: channelNumber });
+    onSubmit({ name: name.trim(), ip: ip.trim(), channel: channelNumber });
   };
 
   return (

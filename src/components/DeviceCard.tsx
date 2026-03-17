@@ -163,7 +163,7 @@ export const DeviceCard = React.memo(function DeviceCard({
               </p>
             </div>
             <button 
-              onClick={(e) => { e.preventDefault(); checkStatus(true); }}
+              onClick={() => checkStatus(true)}
               className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
             >
               <RefreshCw size={12} className={cn(isOnline === null && "animate-spin")} /> RECONECTAR
