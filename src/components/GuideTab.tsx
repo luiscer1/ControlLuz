@@ -110,7 +110,7 @@ void setup() {
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-4xl md:text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
+        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
 
         <Alert className="max-w-2xl mx-auto border-rose-200 bg-rose-50 rounded-[2rem] text-left p-6">
           <ShieldAlert className="h-6 w-6 text-rose-500" />

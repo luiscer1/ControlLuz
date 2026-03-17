@@ -45,7 +45,6 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
     }
 
     const channelNumber = parseInt(channel);
-
     const conflict = devices.find(d => 
       d.ip.trim() === ip.trim() && 
       d.channel === channelNumber && 

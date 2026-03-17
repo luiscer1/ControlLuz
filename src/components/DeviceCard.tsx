@@ -31,14 +31,8 @@ export const DeviceCard = React.memo(function DeviceCard({
   const [loading, setLoading] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const isMounted = useRef(true);
-  const checkInProgress = useRef(false);
 
-  const checkStatus = useCallback(async (isManual: boolean = false) => {
-    if (checkInProgress.current && !isManual) return;
-    checkInProgress.current = true;
-    
-    if (isManual) setLoading(true);
-
+  const checkStatus = useCallback(async () => {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
@@ -53,18 +47,13 @@ export const DeviceCard = React.memo(function DeviceCard({
       if (isMounted.current) setIsOnline(true);
     } catch (e) {
       if (isMounted.current) setIsOnline(false);
-    } finally {
-      checkInProgress.current = false;
-      if (isMounted.current && isManual) {
-        setLoading(false);
-      }
     }
   }, [device.ip]);
 
   useEffect(() => {
     isMounted.current = true;
     checkStatus();
-    const interval = setInterval(() => checkStatus(), 15000); 
+    const interval = setInterval(checkStatus, 15000);
     return () => {
       isMounted.current = false;
       clearInterval(interval);
@@ -72,34 +61,29 @@ export const DeviceCard = React.memo(function DeviceCard({
   }, [checkStatus]);
 
   useEffect(() => {
-    if (refreshTrigger !== undefined && refreshTrigger > 0) checkStatus(true);
+    if (refreshTrigger && refreshTrigger > 0) {
+      checkStatus();
+    }
   }, [refreshTrigger, checkStatus]);
 
   const toggle = useCallback(async () => {
     vibrate([20, 80]);
-    const previousStatus = device.status;
-    const nextStatus = !previousStatus;
-    
+    const nextStatus = !device.status;
     onUpdate(device.id, { status: nextStatus });
     setLoading(true);
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      
       await fetch(`http://${device.ip}/toggle${device.channel}`, { 
         method: 'POST',
-        mode: 'no-cors',
-        signal: controller.signal
+        mode: 'no-cors'
       });
-      
       if (isMounted.current) {
         setIsOnline(true);
         vibrate(15);
       }
     } catch (e) {
       if (isMounted.current) {
-        onUpdate(device.id, { status: previousStatus });
+        onUpdate(device.id, { status: device.status });
         setIsOnline(false);
       }
     } finally {
@@ -110,8 +94,9 @@ export const DeviceCard = React.memo(function DeviceCard({
   const handleReconnect = useCallback(() => {
     vibrate(15);
     setLoading(true);
-    setTimeout(() => {
-      checkStatus(true);
+    setTimeout(async () => {
+      await checkStatus();
+      if (isMounted.current) setLoading(false);
     }, 5000);
   }, [checkStatus]);
 
@@ -156,7 +141,7 @@ export const DeviceCard = React.memo(function DeviceCard({
           </DropdownMenu>
         </div>
 
-        {isOnline === false && (
+        {isOnline === false && !loading && (
           <div className="p-4 rounded-2xl flex flex-col gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
@@ -166,12 +151,17 @@ export const DeviceCard = React.memo(function DeviceCard({
             </div>
             <button 
               onClick={handleReconnect}
-              disabled={loading}
               className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />} 
-              {loading ? 'RECONECTANDO...' : 'RECONECTAR'}
+              <RefreshCw size={12} /> RECONECTAR
             </button>
+          </div>
+        )}
+
+        {loading && (
+          <div className="p-4 rounded-2xl flex flex-col items-center justify-center gap-2 bg-slate-50 border border-slate-100 animate-pulse">
+            <Loader2 size={24} className="animate-spin text-primary" />
+            <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">RECONECTANDO...</p>
           </div>
         )}
 
@@ -193,7 +183,7 @@ export const DeviceCard = React.memo(function DeviceCard({
               device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500"
             )}
           >
-            {loading ? <Loader2 className="animate-spin" size={28} strokeWidth={3} /> : <Power size={32} strokeWidth={3} />}
+            <Power size={32} strokeWidth={3} />
           </button>
         </div>
       </CardContent>
