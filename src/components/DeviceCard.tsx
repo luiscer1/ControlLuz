@@ -36,19 +36,15 @@ export const DeviceCard = React.memo(function DeviceCard({
 
   const checkStatus = useCallback(async (isManual: boolean = false) => {
     if (checkInProgress.current && !isManual) return;
-    
     checkInProgress.current = true;
-
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
-      
       await fetch(`http://${device.ip}/`, { 
         method: 'GET',
         mode: 'no-cors',
         signal: controller.signal 
       });
-      
       clearTimeout(timeoutId);
       if (isMounted.current) setIsOnline(true);
     } catch (e) {
@@ -60,11 +56,9 @@ export const DeviceCard = React.memo(function DeviceCard({
 
   const handleManualReconnect = useCallback(async () => {
     if (isReconnecting) return;
-    
     vibrate(15);
     setIsReconnecting(true);
     setIsOnline(null);
-
     setTimeout(async () => {
       await checkStatus(true);
       if (isMounted.current) {
@@ -78,7 +72,6 @@ export const DeviceCard = React.memo(function DeviceCard({
     isMounted.current = true;
     const initialTimeout = setTimeout(() => checkStatus(), Math.random() * 1000);
     const interval = setInterval(() => checkStatus(), 25000); 
-    
     return () => {
       isMounted.current = false;
       clearTimeout(initialTimeout);
@@ -94,20 +87,16 @@ export const DeviceCard = React.memo(function DeviceCard({
     vibrate([20, 80]);
     const previousStatus = device.status;
     const nextStatus = !previousStatus;
-    
     onUpdate(device.id, { status: nextStatus });
     setLoading(true);
-    
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
-
       await fetch(`http://${device.ip}/toggle${device.channel}`, { 
         method: 'POST',
         mode: 'no-cors',
         signal: controller.signal
       });
-
       if (isMounted.current) {
         setIsOnline(true);
         vibrate(15);
@@ -136,9 +125,7 @@ export const DeviceCard = React.memo(function DeviceCard({
                 {isReconnecting ? 'RECONECTANDO' : isOnline === true ? 'ONLINE' : isOnline === false ? 'OFFLINE' : 'CONECTANDO'}
               </span>
             </div>
-            
             <h3 className="font-black text-2xl tracking-tighter uppercase leading-none italic text-slate-900 truncate max-w-[180px]">{device.name}</h3>
-            
             <div className="flex items-center gap-2">
               <span className="px-2.5 py-1 rounded-xl text-[8px] font-black tracking-widest flex items-center gap-1.5 bg-slate-50 border border-slate-100 text-slate-500">
                 <Wifi size={10} className="text-primary" /> {device.ip}
@@ -148,7 +135,6 @@ export const DeviceCard = React.memo(function DeviceCard({
               </span>
             </div>
           </div>
-
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <button className="h-10 w-10 flex items-center justify-center rounded-xl transition-all bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-900 border border-slate-100 action-button">
@@ -165,7 +151,6 @@ export const DeviceCard = React.memo(function DeviceCard({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-
         {(isOnline === false || isReconnecting) && (
           <div className="p-4 rounded-2xl flex flex-col gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
             <div className="flex items-start gap-3">
@@ -187,7 +172,6 @@ export const DeviceCard = React.memo(function DeviceCard({
             </button>
           </div>
         )}
-
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
           <div className="space-y-0.5">
             <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">ESTADO ACTUAL</p>
@@ -198,7 +182,6 @@ export const DeviceCard = React.memo(function DeviceCard({
               {device.status ? 'ENCENDIDO' : 'APAGADO'}
             </p>
           </div>
-
           <button
             onClick={toggle}
             disabled={loading}
