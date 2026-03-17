@@ -33,13 +33,19 @@ export const DeviceCard = React.memo(function DeviceCard({
   const isMounted = useRef(true);
   const checkInProgress = useRef(false);
 
-  const checkStatus = useCallback(async () => {
+  const checkStatus = useCallback(async (isManual: boolean = false) => {
     if (checkInProgress.current) return;
+    
+    if (isManual && isMounted.current) {
+      setIsOnline(null);
+      vibrate(10);
+    }
+
     checkInProgress.current = true;
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1800);
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
       
       await fetch(`http://${device.ip}/`, { 
         method: 'GET',
@@ -58,8 +64,8 @@ export const DeviceCard = React.memo(function DeviceCard({
 
   useEffect(() => {
     isMounted.current = true;
-    const initialTimeout = setTimeout(checkStatus, Math.random() * 1000);
-    const interval = setInterval(checkStatus, 20000); 
+    const initialTimeout = setTimeout(() => checkStatus(), Math.random() * 1000);
+    const interval = setInterval(() => checkStatus(), 25000); 
     
     return () => {
       isMounted.current = false;
@@ -69,7 +75,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   }, [checkStatus]);
 
   useEffect(() => {
-    if (refreshTrigger !== undefined && refreshTrigger > 0) checkStatus();
+    if (refreshTrigger !== undefined && refreshTrigger > 0) checkStatus(true);
   }, [refreshTrigger, checkStatus]);
 
   const toggle = useCallback(async () => {
@@ -82,7 +88,7 @@ export const DeviceCard = React.memo(function DeviceCard({
     
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2500);
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
 
       await fetch(`http://${device.ip}/toggle${device.channel}`, { 
         method: 'POST',
@@ -157,10 +163,10 @@ export const DeviceCard = React.memo(function DeviceCard({
               </p>
             </div>
             <button 
-              onClick={(e) => { e.stopPropagation(); checkStatus(); }}
+              onClick={(e) => { e.preventDefault(); checkStatus(true); }}
               className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
             >
-              <RefreshCw size={12} className="animate-spin-slow" /> RECONECTAR
+              <RefreshCw size={12} className={cn(isOnline === null && "animate-spin")} /> RECONECTAR
             </button>
           </div>
         )}
