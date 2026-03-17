@@ -30,17 +30,13 @@ export const DeviceCard = React.memo(function DeviceCard({
 }: DeviceCardProps) {
   const [loading, setLoading] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
+  const [isReconnecting, setIsReconnecting] = useState(false);
   const isMounted = useRef(true);
   const checkInProgress = useRef(false);
 
   const checkStatus = useCallback(async (isManual: boolean = false) => {
     if (checkInProgress.current && !isManual) return;
     
-    if (isManual && isMounted.current) {
-      setIsOnline(null);
-      vibrate(10);
-    }
-
     checkInProgress.current = true;
 
     try {
@@ -61,6 +57,22 @@ export const DeviceCard = React.memo(function DeviceCard({
       checkInProgress.current = false;
     }
   }, [device.ip]);
+
+  const handleManualReconnect = useCallback(async () => {
+    if (isReconnecting) return;
+    
+    vibrate(15);
+    setIsReconnecting(true);
+    setIsOnline(null);
+
+    setTimeout(async () => {
+      await checkStatus(true);
+      if (isMounted.current) {
+        setIsReconnecting(false);
+        vibrate(20);
+      }
+    }, 5000);
+  }, [checkStatus, isReconnecting]);
 
   useEffect(() => {
     isMounted.current = true;
@@ -118,10 +130,10 @@ export const DeviceCard = React.memo(function DeviceCard({
             <div className="flex items-center gap-2">
               <div className={cn(
                 "h-2.5 w-2.5 rounded-full animate-pulse",
-                isOnline === true ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : isOnline === false ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]" : "bg-slate-300"
+                isOnline === true ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : (isOnline === false || isReconnecting) ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]" : "bg-slate-300"
               )} />
               <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">
-                {isOnline === true ? 'ONLINE' : isOnline === false ? 'OFFLINE' : 'CONECTANDO'}
+                {isReconnecting ? 'RECONECTANDO' : isOnline === true ? 'ONLINE' : isOnline === false ? 'OFFLINE' : 'CONECTANDO'}
               </span>
             </div>
             
@@ -154,24 +166,24 @@ export const DeviceCard = React.memo(function DeviceCard({
           </DropdownMenu>
         </div>
 
-        {(isOnline === false || isOnline === null) && (
+        {(isOnline === false || isReconnecting) && (
           <div className="p-4 rounded-2xl flex flex-col gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-                {isOnline === null 
-                  ? "RECONECTANDO... POR FAVOR ESPERA UN MOMENTO."
+                {isReconnecting 
+                  ? "ESTABLECIENDO CONEXIÓN... POR FAVOR ESPERA 5 SEGUNDOS."
                   : "NO SE PUDO CONECTAR. REVISAR LA IP DE LA PLACA Y QUE ESTES EN LA MISMA RED WIFI."
                 }
               </p>
             </div>
             <button 
-              onClick={() => checkStatus(true)}
-              disabled={isOnline === null}
+              onClick={handleManualReconnect}
+              disabled={isReconnecting}
               className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 disabled:bg-rose-50 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
             >
-              <RefreshCw size={12} className={cn(isOnline === null && "animate-spin")} /> 
-              {isOnline === null ? "RECONECTANDO" : "RECONECTAR"}
+              <RefreshCw size={12} className={cn(isReconnecting && "animate-spin")} /> 
+              {isReconnecting ? "RECONECTANDO" : "RECONECTAR"}
             </button>
           </div>
         )}
