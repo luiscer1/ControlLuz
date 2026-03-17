@@ -59,6 +59,7 @@ export const DeviceCard = React.memo(function DeviceCard({
     vibrate(15);
     setIsReconnecting(true);
     setIsOnline(null);
+    
     setTimeout(async () => {
       await checkStatus(true);
       if (isMounted.current) {

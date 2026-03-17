@@ -131,7 +131,7 @@ void loop() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
           <Settings2 size={14} /> MANUAL TÉCNICO V1.0
         </div>
-        <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic px-4">CONFIGURACIÓN</h2>
+        <h2 className="text-5xl md:text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic px-4">CONFIGURACIÓN</h2>
         
         <Alert className="max-w-2xl mx-auto mt-8 border-primary/20 bg-primary/5 rounded-[2rem] text-left p-6">
           <AlertCircle className="h-5 w-5 text-primary" />
