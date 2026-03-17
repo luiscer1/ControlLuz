@@ -35,7 +35,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   const checkStatus = useCallback(async () => {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 2000);
+      const timeoutId = setTimeout(() => controller.abort(), 1500);
       
       await fetch(`http://${device.ip}/`, { 
         method: 'GET',
@@ -53,7 +53,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   useEffect(() => {
     isMounted.current = true;
     checkStatus();
-    const interval = setInterval(checkStatus, 15000);
+    const interval = setInterval(checkStatus, 10000);
     return () => {
       isMounted.current = false;
       clearInterval(interval);
@@ -92,11 +92,15 @@ export const DeviceCard = React.memo(function DeviceCard({
   }, [device.id, device.ip, device.channel, device.status, onUpdate]);
 
   const handleReconnect = useCallback(() => {
-    vibrate(15);
+    vibrate(20);
     setLoading(true);
+    setIsOnline(null);
+    
     setTimeout(async () => {
       await checkStatus();
-      if (isMounted.current) setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }, 5000);
   }, [checkStatus]);
 
@@ -107,8 +111,8 @@ export const DeviceCard = React.memo(function DeviceCard({
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <div className={cn(
-                "h-2.5 w-2.5 rounded-full animate-pulse",
-                isOnline === true ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" : (isOnline === false) ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]" : "bg-slate-300"
+                "h-2.5 w-2.5 rounded-full",
+                isOnline === true ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" : (isOnline === false) ? "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]" : "bg-slate-300"
               )} />
               <span className="text-[8px] font-black uppercase tracking-widest text-slate-400">
                 {isOnline === true ? 'ONLINE' : isOnline === false ? 'OFFLINE' : 'CONECTANDO'}
@@ -146,7 +150,7 @@ export const DeviceCard = React.memo(function DeviceCard({
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-                ERROR DE CONEXIÓN. REVISA LA IP Y ASEGÚRATE DE ESTAR EN LA MISMA RED WIFI.
+                NO SE PUDO CONECTAR REVISAR LA IP DE LA PLACA Y QUE ESTES EN LA MISMA RED WIFI
               </p>
             </div>
             <button 
@@ -159,7 +163,7 @@ export const DeviceCard = React.memo(function DeviceCard({
         )}
 
         {loading && (
-          <div className="p-4 rounded-2xl flex flex-col items-center justify-center gap-2 bg-slate-50 border border-slate-100 animate-pulse">
+          <div className="p-4 rounded-2xl flex flex-col items-center justify-center gap-2 bg-slate-50 border border-slate-100">
             <Loader2 size={24} className="animate-spin text-primary" />
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">RECONECTANDO...</p>
           </div>

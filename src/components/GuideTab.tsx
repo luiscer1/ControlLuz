@@ -58,43 +58,7 @@ void setup() {
   server.begin();
 }`;
 
-  const esp8266Code = `#include <ESP8266WiFi.h>
-#include <ESP8266WebServer.h>
-
-const char* ssid = "TU_RED_WIFI";
-const char* password = "TU_PASS_WIFI";
-
-ESP8266WebServer server(80);
-
-const int PIN_R1 = 5; 
-const int PIN_R2 = 4; 
-
-void handleToggle1() {
-  digitalWrite(PIN_R1, !digitalRead(PIN_R1));
-  server.send(200, "text/plain", "OK");
-}
-
-void handleToggle2() {
-  digitalWrite(PIN_R2, !digitalRead(PIN_R2));
-  server.send(200, "text/plain", "OK");
-}
-
-void setup() {
-  Serial.begin(115200);
-  pinMode(PIN_R1, OUTPUT);
-  pinMode(PIN_R2, OUTPUT);
-  digitalWrite(PIN_R1, HIGH); 
-  digitalWrite(PIN_R2, HIGH);
-  
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) { delay(500); }
-  
-  server.on("/toggle1", HTTP_POST, handleToggle1);
-  server.on("/toggle2", HTTP_POST, handleToggle2);
-  server.begin();
-}`;
-
-  const currentCode = selectedFirmware === 'esp32' ? esp32Code : esp8266Code;
+  const currentCode = selectedFirmware === 'esp32' ? esp32Code : '';
 
   const copyToClipboard = () => {
     vibrate(50);
@@ -110,15 +74,15 @@ void setup() {
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
+        <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
 
         <Alert className="max-w-2xl mx-auto border-rose-200 bg-rose-50 rounded-[2rem] text-left p-6">
           <ShieldAlert className="h-6 w-6 text-rose-500" />
-          <AlertTitle className="text-rose-700 font-black uppercase tracking-widest text-xs">¡IMPORTANTE: ERROR DE CONEXIÓN EN MÓVIL!</AlertTitle>
+          <AlertTitle className="text-rose-700 font-black uppercase tracking-widest text-xs">¡IMPORTANTE: ERROR EN MÓVIL!</AlertTitle>
           <AlertDescription className="text-rose-600 text-sm font-medium mt-2 leading-relaxed">
-            Si en la computadora funciona pero en el celular dice "Offline", es por seguridad del navegador (HTTPS bloqueando HTTP local).
+            Al desplegar en AWS Amplify (HTTPS), el navegador del celular bloquea la conexión a la placa local (HTTP) por seguridad.
             <br/><br/>
-            <strong>SOLUCIÓN:</strong> En Chrome/Safari de tu celular, ve a Configuración del sitio ➔ "Contenido no seguro" y actívalo para esta página. Así el celular podrá hablar con la placa.
+            <strong>SOLUCIÓN:</strong> En tu celular, entra a los ajustes del sitio en el navegador y activa la opción <strong>"Contenido no seguro"</strong> para este sitio. Esto permitirá que la app hable con tu placa.
           </AlertDescription>
         </Alert>
       </div>
@@ -170,26 +134,7 @@ void setup() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-4">
             <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE</h3>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => { vibrate(10); setSelectedFirmware('esp32'); }}
-                className={cn(
-                  "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                  selectedFirmware === 'esp32' ? "bg-primary text-white shadow-lg shadow-primary/30" : "bg-white text-slate-400 border border-slate-100"
-                )}
-              >
-                ESP32
-              </button>
-              <button 
-                onClick={() => { vibrate(10); setSelectedFirmware('esp8266'); }}
-                className={cn(
-                  "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
-                  selectedFirmware === 'esp8266' ? "bg-primary text-white shadow-lg shadow-primary/30" : "bg-white text-slate-400 border border-slate-100"
-                )}
-              >
-                ESP8266
-              </button>
-            </div>
+            <button className="px-6 py-2 rounded-xl text-[10px] font-black uppercase bg-primary text-white shadow-lg">ESP32</button>
           </div>
           <Button 
             className="h-14 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest px-8 action-button shadow-xl"
