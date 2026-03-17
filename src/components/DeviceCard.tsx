@@ -56,7 +56,7 @@ export const DeviceCard = React.memo(function DeviceCard({
     } finally {
       checkInProgress.current = false;
       if (isMounted.current && isManual) {
-        setTimeout(() => setLoading(false), 500);
+        setLoading(false);
       }
     }
   }, [device.ip]);
@@ -106,6 +106,14 @@ export const DeviceCard = React.memo(function DeviceCard({
       if (isMounted.current) setLoading(false);
     }
   }, [device.id, device.ip, device.channel, device.status, onUpdate]);
+
+  const handleReconnect = useCallback(() => {
+    vibrate(15);
+    setLoading(true);
+    setTimeout(() => {
+      checkStatus(true);
+    }, 5000);
+  }, [checkStatus]);
 
   return (
     <Card className="relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-2xl transition-all duration-300">
@@ -157,7 +165,7 @@ export const DeviceCard = React.memo(function DeviceCard({
               </p>
             </div>
             <button 
-              onClick={() => { vibrate(15); checkStatus(true); }}
+              onClick={handleReconnect}
               disabled={loading}
               className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
             >

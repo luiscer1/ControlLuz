@@ -130,7 +130,7 @@ void setup() {
             <div className="space-y-6">
               <div className="flex items-center gap-4 border-b border-white/10 pb-4">
                 <div className="bg-primary h-12 w-12 rounded-xl flex items-center justify-center"><Cpu size={24} /></div>
-                <h4 className="font-black text-lg uppercase tracking-tight italic">ESP ➔ RELÉ</h4>
+                <h4 className="font-black text-lg uppercase tracking-tight italic text-white">ESP ➔ RELÉ</h4>
               </div>
               <ul className="space-y-4">
                 <li className="flex flex-col gap-1">
