@@ -12,8 +12,7 @@ import {
   Lightbulb,
   Info,
   Copy,
-  Check,
-  ShieldAlert
+  Check
 } from 'lucide-react';
 import { vibrate } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
@@ -137,7 +136,7 @@ void loop() {
           <AlertCircle className="h-5 w-5 text-primary" />
           <AlertTitle className="text-primary font-black uppercase tracking-widest text-xs">REQUISITO CRÍTICO</AlertTitle>
           <AlertDescription className="text-slate-600 text-sm font-medium mt-1 leading-relaxed">
-            El <strong>Teléfono</strong> y la placa deben estar en la misma red WiFi. Si en móvil aparece Offline y en PC Online, activa "Permitir contenido no seguro" en los ajustes de tu navegador para la IP de la placa.
+            El teléfono y la placa deben estar en la misma red WiFi. Si en móvil aparece Offline y en PC Online, activa "Permitir contenido no seguro" en los ajustes de tu navegador para la IP de la placa.
           </AlertDescription>
         </Alert>
       </div>
@@ -220,18 +219,6 @@ void loop() {
             </pre>
           </CardContent>
         </Card>
-      </div>
-
-      <div className="px-6">
-        <Alert variant="destructive" className="rounded-[2rem] border-rose-200 bg-rose-50 p-8">
-          <ShieldAlert className="h-6 w-6 text-rose-500" />
-          <AlertTitle className="text-rose-600 font-black uppercase tracking-widest text-sm mb-2">SOLUCIÓN PARA MÓVILES</AlertTitle>
-          <AlertDescription className="text-rose-700 text-[11px] font-bold uppercase leading-relaxed">
-            Si en el teléfono no conecta, es porque los navegadores bloquean peticiones HTTP desde sitios HTTPS. 
-            Solución: Entra a los ajustes de tu navegador (Chrome o Safari) y en "Configuración del sitio", busca la IP de tu placa y activa "Contenido no seguro". 
-            Opcional: Instala la app en tu pantalla de inicio para mejorar la conexión.
-          </AlertDescription>
-        </Alert>
       </div>
     </div>
   );
