@@ -115,9 +115,6 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
               ))}
             </SelectContent>
           </Select>
-          <p className="text-[9px] font-medium text-slate-400 uppercase tracking-tight pl-1">
-            SELECCIONA EL PIN FÍSICO CORRESPONDIENTE EN TU ESP32
-          </p>
         </div>
       </div>
       
