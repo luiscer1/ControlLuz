@@ -34,7 +34,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   const checkInProgress = useRef(false);
 
   const checkStatus = useCallback(async (isManual: boolean = false) => {
-    if (checkInProgress.current) return;
+    if (checkInProgress.current && !isManual) return;
     
     if (isManual && isMounted.current) {
       setIsOnline(null);
