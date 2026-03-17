@@ -36,30 +36,37 @@ export const DeviceCard = React.memo(function DeviceCard({
   const checkStatus = useCallback(async (isManual: boolean = false) => {
     if (checkInProgress.current && !isManual) return;
     checkInProgress.current = true;
+    
+    if (isManual) setLoading(true);
+
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000);
+      
       await fetch(`http://${device.ip}/`, { 
         method: 'GET',
         mode: 'no-cors',
         signal: controller.signal 
       });
+      
       clearTimeout(timeoutId);
       if (isMounted.current) setIsOnline(true);
     } catch (e) {
       if (isMounted.current) setIsOnline(false);
     } finally {
       checkInProgress.current = false;
+      if (isMounted.current && isManual) {
+        setTimeout(() => setLoading(false), 500);
+      }
     }
   }, [device.ip]);
 
   useEffect(() => {
     isMounted.current = true;
-    const initialTimeout = setTimeout(() => checkStatus(), Math.random() * 1000);
-    const interval = setInterval(() => checkStatus(), 25000); 
+    checkStatus();
+    const interval = setInterval(() => checkStatus(), 15000); 
     return () => {
       isMounted.current = false;
-      clearTimeout(initialTimeout);
       clearInterval(interval);
     };
   }, [checkStatus]);
@@ -72,16 +79,20 @@ export const DeviceCard = React.memo(function DeviceCard({
     vibrate([20, 80]);
     const previousStatus = device.status;
     const nextStatus = !previousStatus;
+    
     onUpdate(device.id, { status: nextStatus });
     setLoading(true);
+
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
+      
       await fetch(`http://${device.ip}/toggle${device.channel}`, { 
         method: 'POST',
         mode: 'no-cors',
         signal: controller.signal
       });
+      
       if (isMounted.current) {
         setIsOnline(true);
         vibrate(15);
@@ -136,25 +147,29 @@ export const DeviceCard = React.memo(function DeviceCard({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {(isOnline === false) && (
+
+        {isOnline === false && (
           <div className="p-4 rounded-2xl flex flex-col gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-                NO SE PUDO CONECTAR. REVISAR LA IP DE LA PLACA Y QUE ESTES EN LA MISMA RED WIFI.
+                ERROR DE CONEXIÓN. REVISA LA IP Y ASEGÚRATE DE ESTAR EN LA MISMA RED WIFI.
               </p>
             </div>
             <button 
               onClick={() => { vibrate(15); checkStatus(true); }}
+              disabled={loading}
               className="w-full py-2.5 bg-rose-100 hover:bg-rose-200 text-rose-700 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
             >
-              <RefreshCw size={12} /> RECONECTAR
+              {loading ? <Loader2 size={12} className="animate-spin" /> : <RefreshCw size={12} />} 
+              {loading ? 'RECONECTANDO...' : 'RECONECTAR'}
             </button>
           </div>
         )}
+
         <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-50">
           <div className="space-y-0.5">
-            <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">ESTADO ACTUAL</p>
+            <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">ESTADO</p>
             <p className={cn(
               "font-black text-xl italic leading-none tracking-tight transition-colors duration-300",
               device.status ? "text-emerald-600" : "text-rose-600"

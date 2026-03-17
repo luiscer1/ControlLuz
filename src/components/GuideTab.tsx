@@ -12,7 +12,8 @@ import {
   Lightbulb,
   Info,
   Copy,
-  Check
+  Check,
+  ShieldAlert
 } from 'lucide-react';
 import { vibrate } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
@@ -33,15 +34,13 @@ const int PIN_R1 = 25;
 const int PIN_R2 = 33;
 
 void handleToggle1() {
-  int estadoActual = digitalRead(PIN_R1);
-  digitalWrite(PIN_R1, !estadoActual);
-  server.send(200, "text/plain", "Luz 1 cambiada");
+  digitalWrite(PIN_R1, !digitalRead(PIN_R1));
+  server.send(200, "text/plain", "OK");
 }
 
 void handleToggle2() {
-  int estadoActual = digitalRead(PIN_R2);
-  digitalWrite(PIN_R2, !estadoActual);
-  server.send(200, "text/plain", "Luz 2 cambiada");
+  digitalWrite(PIN_R2, !digitalRead(PIN_R2));
+  server.send(200, "text/plain", "OK");
 }
 
 void setup() {
@@ -50,22 +49,13 @@ void setup() {
   pinMode(PIN_R2, OUTPUT);
   digitalWrite(PIN_R1, HIGH); 
   digitalWrite(PIN_R2, HIGH);
-  delay(1000); 
+  
   WiFi.begin(ssid, password);
-  Serial.print("Conectando a WiFi");
-  while (WiFi.status() != WL_CONNECTED) { 
-    delay(500); 
-    Serial.print("."); 
-  }
-  Serial.println("\\n¡Conectado! La IP del ESP32 es: " + WiFi.localIP().toString());
+  while (WiFi.status() != WL_CONNECTED) { delay(500); }
+  
   server.on("/toggle1", HTTP_POST, handleToggle1);
   server.on("/toggle2", HTTP_POST, handleToggle2);
   server.begin();
-  Serial.println("Servidor listo - LUZ CONTROL V1.0");
-}
-
-void loop() { 
-  server.handleClient(); 
 }`;
 
   const esp8266Code = `#include <ESP8266WiFi.h>
@@ -80,15 +70,13 @@ const int PIN_R1 = 5;
 const int PIN_R2 = 4; 
 
 void handleToggle1() {
-  int estadoActual = digitalRead(PIN_R1);
-  digitalWrite(PIN_R1, !estadoActual);
-  server.send(200, "text/plain", "Luz 1 cambiada");
+  digitalWrite(PIN_R1, !digitalRead(PIN_R1));
+  server.send(200, "text/plain", "OK");
 }
 
 void handleToggle2() {
-  int estadoActual = digitalRead(PIN_R2);
-  digitalWrite(PIN_R2, !estadoActual);
-  server.send(200, "text/plain", "Luz 2 cambiada");
+  digitalWrite(PIN_R2, !digitalRead(PIN_R2));
+  server.send(200, "text/plain", "OK");
 }
 
 void setup() {
@@ -97,22 +85,13 @@ void setup() {
   pinMode(PIN_R2, OUTPUT);
   digitalWrite(PIN_R1, HIGH); 
   digitalWrite(PIN_R2, HIGH);
-  delay(1000); 
+  
   WiFi.begin(ssid, password);
-  Serial.print("Conectando a WiFi");
-  while (WiFi.status() != WL_CONNECTED) { 
-    delay(500); 
-    Serial.print("."); 
-  }
-  Serial.println("\\n¡Conectado! La IP del ESP8266 es: " + WiFi.localIP().toString());
+  while (WiFi.status() != WL_CONNECTED) { delay(500); }
+  
   server.on("/toggle1", HTTP_POST, handleToggle1);
   server.on("/toggle2", HTTP_POST, handleToggle2);
   server.begin();
-  Serial.println("Servidor listo - LUZ CONTROL V1.0");
-}
-
-void loop() { 
-  server.handleClient(); 
 }`;
 
   const currentCode = selectedFirmware === 'esp32' ? esp32Code : esp8266Code;
@@ -125,24 +104,27 @@ void loop() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-12 pb-40">
-      <div className="space-y-4 text-center">
+    <div className="max-w-4xl mx-auto space-y-10 pb-40">
+      <div className="space-y-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
-          <Settings2 size={14} /> MANUAL TÉCNICO V1.0
+          <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
-        <h2 className="text-5xl md:text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic px-4">CONFIGURACIÓN</h2>
         
-        <Alert className="max-w-2xl mx-auto mt-8 border-primary/20 bg-primary/5 rounded-[2rem] text-left p-6">
-          <AlertCircle className="h-5 w-5 text-primary" />
-          <AlertTitle className="text-primary font-black uppercase tracking-widest text-xs">REQUISITO CRÍTICO</AlertTitle>
-          <AlertDescription className="text-slate-600 text-sm font-medium mt-1 leading-relaxed">
-            El teléfono y la placa deben estar en la misma red WiFi. Si en móvil aparece Offline y en PC Online, activa "Permitir contenido no seguro" en los ajustes de tu navegador para la IP de la placa.
+        <h2 className="text-4xl md:text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
+
+        <Alert className="max-w-2xl mx-auto border-rose-200 bg-rose-50 rounded-[2rem] text-left p-6">
+          <ShieldAlert className="h-6 w-6 text-rose-500" />
+          <AlertTitle className="text-rose-700 font-black uppercase tracking-widest text-xs">¡IMPORTANTE: ERROR DE CONEXIÓN EN MÓVIL!</AlertTitle>
+          <AlertDescription className="text-rose-600 text-sm font-medium mt-2 leading-relaxed">
+            Si en la computadora funciona pero en el celular dice "Offline", es por seguridad del navegador (HTTPS bloqueando HTTP local).
+            <br/><br/>
+            <strong>SOLUCIÓN:</strong> En Chrome/Safari de tu celular, ve a Configuración del sitio ➔ "Contenido no seguro" y actívalo para esta página. Así el celular podrá hablar con la placa.
           </AlertDescription>
         </Alert>
       </div>
 
-      <div className="space-y-6 pt-4">
-        <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 px-4 leading-none italic">ESQUEMA DE CONEXIÓN</h3>
+      <div className="space-y-6">
+        <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 px-4 italic">ESQUEMA DE CONEXIÓN</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-8 rounded-[2rem] bg-slate-900 text-white border-none shadow-2xl">
             <div className="space-y-6">
@@ -151,13 +133,13 @@ void loop() {
                 <h4 className="font-black text-lg uppercase tracking-tight italic">ESP ➔ RELÉ</h4>
               </div>
               <ul className="space-y-4">
-                <li className="flex flex-col gap-1"><span className="text-primary text-[9px] font-black uppercase tracking-widest">ALIMENTACIÓN VCC</span><span className="text-slate-300 text-xs font-medium">VIN (o 5V) a VCC del Relé</span></li>
-                <li className="flex flex-col gap-1"><span className="text-primary text-[9px] font-black uppercase tracking-widest">TIERRA GND</span><span className="text-slate-300 text-xs font-medium">GND a GND del Relé</span></li>
                 <li className="flex flex-col gap-1">
-                  <span className="text-primary text-[9px] font-black uppercase tracking-widest">PINES DE CONTROL</span>
-                  <span className="text-slate-300 text-xs font-medium">
-                    {selectedFirmware === 'esp32' ? 'GPIO 25 (Canal 1) y GPIO 33 (Canal 2)' : 'D1 / GPIO 5 (Canal 1) y D2 / GPIO 4 (Canal 2)'}
-                  </span>
+                  <span className="text-primary text-[9px] font-black uppercase tracking-widest">ALIMENTACIÓN</span>
+                  <span className="text-slate-300 text-xs font-medium">VIN a VCC / GND a GND</span>
+                </li>
+                <li className="flex flex-col gap-1">
+                  <span className="text-primary text-[9px] font-black uppercase tracking-widest">PINES CONTROL</span>
+                  <span className="text-slate-300 text-xs font-medium">GPIO 25 (CH1) / GPIO 33 (CH2)</span>
                 </li>
               </ul>
             </div>
@@ -170,19 +152,24 @@ void loop() {
                 <h4 className="font-black text-lg uppercase tracking-tight italic text-slate-900">RELÉ ➔ FOCO</h4>
               </div>
               <ul className="space-y-4">
-                <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight"><Info size={14} className="text-primary shrink-0"/><span className="uppercase">CABLE FASE (CORRIENTE) AL 'COM' DEL RELÉ.</span></li>
-                <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight"><Lightbulb size={14} className="text-primary shrink-0"/><span className="uppercase">BORNE 'NO' (NORMALMENTE ABIERTO) AL FOCO.</span></li>
-                <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight"><Zap size={14} className="text-primary shrink-0"/><span className="uppercase">CONECTAR EL FOCO AL CABLE NEUTRO.</span></li>
+                <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight">
+                  <Info size={14} className="text-primary shrink-0"/>
+                  <span className="uppercase">FASE AL 'COM' DEL RELÉ.</span>
+                </li>
+                <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight">
+                  <Lightbulb size={14} className="text-primary shrink-0"/>
+                  <span className="uppercase">'NO' AL FOCO.</span>
+                </li>
               </ul>
             </div>
           </Card>
         </div>
       </div>
 
-      <div className="space-y-6 pt-8">
+      <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-4">
-            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE V1.0</h3>
+            <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE</h3>
             <div className="flex gap-2">
               <button 
                 onClick={() => { vibrate(10); setSelectedFirmware('esp32'); }}
@@ -214,7 +201,7 @@ void loop() {
 
         <Card className="border-none bg-slate-900 text-slate-300 shadow-2xl rounded-[2.5rem] overflow-hidden">
           <CardContent className="p-0">
-            <pre className="p-8 text-[11px] font-mono leading-relaxed overflow-x-auto h-[500px] bg-slate-950">
+            <pre className="p-8 text-[11px] font-mono leading-relaxed overflow-x-auto h-[400px] bg-slate-950">
               <code>{currentCode}</code>
             </pre>
           </CardContent>
