@@ -142,7 +142,7 @@ void loop() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
           <Settings2 size={14} /> MANUAL TÉCNICO V1.0
         </div>
-        <h2 className="text-2xl md:text-3xl font-black tracking-tight uppercase text-slate-900 leading-none italic px-4">CONFIGURACIÓN</h2>
+        <h2 className="text-3xl md:text-4xl font-black tracking-tight uppercase text-slate-900 leading-none italic px-4">CONFIGURACIÓN</h2>
         
         <Alert className="max-w-2xl mx-auto mt-8 border-primary/20 bg-primary/5 rounded-[2rem] text-left p-6">
           <AlertCircle className="h-5 w-5 text-primary" />
@@ -154,7 +154,7 @@ void loop() {
       </div>
 
       <div className="space-y-6 pt-4">
-        <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-slate-900 px-4 leading-none italic">ESQUEMA DE CONEXIÓN</h3>
+        <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 px-4 leading-none italic">ESQUEMA DE CONEXIÓN</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-8 rounded-[2rem] bg-slate-900 text-white border-none shadow-2xl">
             <div className="space-y-6">
@@ -194,7 +194,7 @@ void loop() {
       <div className="space-y-6 pt-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-4">
-            <h3 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE V1.0</h3>
+            <h3 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE V1.0</h3>
             <div className="flex gap-2">
               <button 
                 onClick={() => { vibrate(10); setSelectedFirmware('esp32'); }}
