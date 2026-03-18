@@ -116,7 +116,7 @@ void loop() {
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
+        <h2 className="text-4xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
 
         <div className="mx-auto max-w-xl p-6 rounded-[2rem] bg-rose-50 border-2 border-rose-100 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="bg-rose-500 p-2 rounded-full text-white">
