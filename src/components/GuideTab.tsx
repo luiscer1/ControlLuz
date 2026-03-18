@@ -67,7 +67,7 @@ void setup() {
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-6xl font-black tracking-tight uppercase text-slate-900 leading-none italic break-words">CONFIGURACIÓN</h2>
+        <h2 className="text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic break-words">CONFIGURACIÓN</h2>
       </div>
 
       <div className="space-y-6">
