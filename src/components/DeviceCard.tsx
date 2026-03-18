@@ -29,6 +29,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   refreshTrigger 
 }: DeviceCardProps) {
   const [loading, setLoading] = useState(false);
+  const [isReconnecting, setIsReconnecting] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const isMounted = useRef(true);
 
@@ -69,6 +70,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   const toggle = useCallback(async () => {
     if (loading) return;
     vibrate([20, 80]);
+    
     const nextStatus = !device.status;
     onUpdate(device.id, { status: nextStatus });
     setLoading(true);
@@ -94,13 +96,13 @@ export const DeviceCard = React.memo(function DeviceCard({
 
   const handleReconnect = useCallback(() => {
     vibrate(20);
-    setLoading(true);
+    setIsReconnecting(true);
     setIsOnline(null);
     
     setTimeout(async () => {
       await checkStatus();
       if (isMounted.current) {
-        setLoading(false);
+        setIsReconnecting(false);
       }
     }, 5000);
   }, [checkStatus]);
@@ -146,7 +148,7 @@ export const DeviceCard = React.memo(function DeviceCard({
           </DropdownMenu>
         </div>
 
-        {isOnline === false && !loading && (
+        {isOnline === false && !isReconnecting && (
           <div className="p-4 rounded-2xl flex flex-col gap-3 bg-rose-50 border border-rose-100 animate-in slide-in-from-top duration-300">
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
@@ -163,7 +165,7 @@ export const DeviceCard = React.memo(function DeviceCard({
           </div>
         )}
 
-        {loading && (
+        {isReconnecting && (
           <div className="p-4 rounded-2xl flex flex-col items-center justify-center gap-2 bg-slate-50 border border-slate-100">
             <Loader2 size={24} className="animate-spin text-primary" />
             <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">RECONECTANDO...</p>
@@ -175,17 +177,17 @@ export const DeviceCard = React.memo(function DeviceCard({
             <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">ESTADO</p>
             <p className={cn(
               "font-black text-xl italic leading-none tracking-tight transition-colors duration-300",
-              device.status ? "text-rose-600" : "text-emerald-600"
+              device.status ? "text-emerald-600" : "text-rose-600"
             )}>
-              {device.status ? 'APAGADO' : 'ENCENDIDO'}
+              {device.status ? 'ENCENDIDO' : 'APAGADO'}
             </p>
           </div>
           <button
             onClick={toggle}
-            disabled={loading}
+            disabled={isReconnecting}
             className={cn(
               "h-16 w-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-300 action-button shadow-xl border-2 text-white",
-              device.status ? "bg-rose-600 border-rose-500" : "bg-emerald-600 border-emerald-500"
+              device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500"
             )}
           >
             <Power size={32} strokeWidth={3} />
