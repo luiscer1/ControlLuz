@@ -247,13 +247,13 @@ export default function Home() {
               </div>
             </div>
             
-            <Button 
+            <button 
               onClick={handleAccess} 
               disabled={!nameInput.trim() || !passInput.trim()}
-              className="w-full h-16 rounded-2xl bg-white text-primary hover:bg-white/90 font-black uppercase text-sm tracking-widest shadow-2xl action-button"
+              className="w-full h-16 rounded-2xl bg-white text-primary hover:bg-white/90 font-black uppercase text-sm tracking-widest shadow-2xl action-button flex items-center justify-center"
             >
               {!hasAccount ? 'COMENZAR' : 'ENTRAR'} <ArrowRight size={20} className="ml-2" />
-            </Button>
+            </button>
           </div>
         </div>
       </div>
