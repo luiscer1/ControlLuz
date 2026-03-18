@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 
 interface DeviceCardProps {
   device: Device;
@@ -31,6 +32,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const isMounted = useRef(true);
+  const { toast } = useToast();
 
   const checkStatus = useCallback(async () => {
     try {
@@ -67,6 +69,16 @@ export const DeviceCard = React.memo(function DeviceCard({
   }, [refreshTrigger, checkStatus]);
 
   const toggle = useCallback(async () => {
+    if (isOnline !== true) {
+      vibrate([50, 50, 50]);
+      toast({
+        variant: "destructive",
+        title: "SIN CONEXIÓN",
+        description: "NO SE PUEDE OPERAR UN DISPOSITIVO FUERA DE LÍNEA"
+      });
+      return;
+    }
+
     vibrate([20, 80]);
     
     const nextStatus = !device.status;
@@ -78,9 +90,12 @@ export const DeviceCard = React.memo(function DeviceCard({
     }).then(() => {
       if (isMounted.current) setIsOnline(true);
     }).catch(() => {
-      if (isMounted.current) setIsOnline(false);
+      if (isMounted.current) {
+        setIsOnline(false);
+        onUpdate(device.id, { status: device.status });
+      }
     });
-  }, [device.id, device.ip, device.channel, device.status, onUpdate]);
+  }, [device.id, device.ip, device.channel, device.status, isOnline, onUpdate, toast]);
 
   const handleReconnect = useCallback(() => {
     vibrate(20);
@@ -141,7 +156,7 @@ export const DeviceCard = React.memo(function DeviceCard({
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-                DISPOSITIVO FUERA DE LÍNEA. VERIFICA LA RED WIFI E IP.
+                DISPOSITIVO FUERA DE LÍNEA VERIFICA LA IP DEL MICROCONTROLADOR Y QUE ESTES CONECTADO A LA MISMA RED WI-FI
               </p>
             </div>
             <button 
@@ -172,10 +187,11 @@ export const DeviceCard = React.memo(function DeviceCard({
           </div>
           <button
             onClick={toggle}
-            disabled={isReconnecting}
+            disabled={isReconnecting || isOnline === false}
             className={cn(
               "h-16 w-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-300 action-button shadow-xl border-2 text-white",
-              device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500"
+              device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500",
+              isOnline === false && "grayscale opacity-50"
             )}
           >
             <Power size={32} strokeWidth={3} />
