@@ -175,9 +175,9 @@ export const DeviceCard = React.memo(function DeviceCard({
             <p className="text-[8px] font-black uppercase tracking-widest text-slate-400">ESTADO</p>
             <p className={cn(
               "font-black text-xl italic leading-none tracking-tight transition-colors duration-300",
-              device.status ? "text-emerald-600" : "text-rose-600"
+              device.status ? "text-rose-600" : "text-emerald-600"
             )}>
-              {device.status ? 'ENCENDIDO' : 'APAGADO'}
+              {device.status ? 'APAGADO' : 'ENCENDIDO'}
             </p>
           </div>
           <button
@@ -185,7 +185,7 @@ export const DeviceCard = React.memo(function DeviceCard({
             disabled={loading}
             className={cn(
               "h-16 w-16 rounded-[1.5rem] flex items-center justify-center transition-all duration-300 action-button shadow-xl border-2 text-white",
-              device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500"
+              device.status ? "bg-rose-600 border-rose-500" : "bg-emerald-600 border-emerald-500"
             )}
           >
             <Power size={32} strokeWidth={3} />
