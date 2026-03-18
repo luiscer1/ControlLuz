@@ -18,13 +18,22 @@ import { vibrate } from '@/lib/haptics';
 export function GuideTab() {
   const [copied, setCopied] = useState(false);
 
-  const esp32Code = `#include <WiFi.h>
-#include <WebServer.h>
+  const universalCode = `#ifdef ESP32
+  #include <WiFi.h>
+  #include <WebServer.h>
+#else
+  #include <ESP8266WiFi.h>
+  #include <ESP8266WebServer.h>
+#endif
 
 const char* ssid = "TU_RED_WIFI";
 const char* password = "TU_PASS_WIFI";
 
-WebServer server(80);
+#ifdef ESP32
+  WebServer server(80);
+#else
+  ESP8266WebServer server(80);
+#endif
 
 const int PIN_R1 = 25; 
 const int PIN_R2 = 33;
@@ -52,11 +61,15 @@ void setup() {
   server.on("/toggle1", HTTP_POST, handleToggle1);
   server.on("/toggle2", HTTP_POST, handleToggle2);
   server.begin();
+}
+
+void loop() {
+  server.handleClient();
 }`;
 
   const copyToClipboard = () => {
     vibrate(50);
-    navigator.clipboard.writeText(esp32Code);
+    navigator.clipboard.writeText(universalCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -87,7 +100,7 @@ void setup() {
             <div className="space-y-6">
               <div className="flex items-center gap-4 border-b border-white/10 pb-4">
                 <div className="bg-primary h-12 w-12 rounded-xl flex items-center justify-center"><Cpu size={24} /></div>
-                <h4 className="font-black text-lg uppercase tracking-tight italic text-white">ESP ➔ RELÉ</h4>
+                <h4 className="font-black text-lg uppercase tracking-tight italic text-white">PLACA ➔ RELÉ</h4>
               </div>
               <ul className="space-y-4">
                 <li className="flex flex-col gap-1">
@@ -141,7 +154,7 @@ void setup() {
         <Card className="border-none bg-slate-900 text-slate-300 shadow-2xl rounded-[2.5rem] overflow-hidden">
           <CardContent className="p-0">
             <pre className="p-8 text-[11px] font-mono leading-relaxed overflow-x-auto h-[400px] bg-slate-950">
-              <code>{esp32Code}</code>
+              <code>{universalCode}</code>
             </pre>
           </CardContent>
         </Card>
