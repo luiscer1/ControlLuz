@@ -10,7 +10,8 @@ import {
   Lightbulb,
   Info,
   Copy,
-  Check
+  Check,
+  AlertTriangle
 } from 'lucide-react';
 import { vibrate } from '@/lib/haptics';
 
@@ -68,6 +69,15 @@ void setup() {
         </div>
         
         <h2 className="text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic break-words">CONFIGURACIÓN</h2>
+
+        <div className="mx-auto max-w-md p-6 rounded-[2rem] bg-rose-50 border-2 border-rose-100 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="bg-rose-500 p-2 rounded-full text-white">
+            <AlertTriangle size={20} />
+          </div>
+          <p className="text-[11px] font-black uppercase tracking-tight text-rose-700 leading-tight">
+            IMPORTANTE: el dispositivo y la placa deben estar en la misma red wifi para el correcto funcionamiento
+          </p>
+        </div>
       </div>
 
       <div className="space-y-6">
