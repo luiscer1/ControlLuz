@@ -14,26 +14,19 @@ import {
   AlertTriangle
 } from 'lucide-react';
 import { vibrate } from '@/lib/haptics';
+import { cn } from '@/lib/utils';
 
 export function GuideTab() {
   const [copied, setCopied] = useState(false);
+  const [boardType, setBoardType] = useState<'ESP32' | 'ESP8266'>('ESP32');
 
-  const universalCode = `#ifdef ESP32
-  #include <WiFi.h>
-  #include <WebServer.h>
-#else
-  #include <ESP8266WiFi.h>
-  #include <ESP8266WebServer.h>
-#endif
+  const esp32Code = `#include <WiFi.h>
+#include <WebServer.h>
 
 const char* ssid = "TU_RED_WIFI";
 const char* password = "TU_PASS_WIFI";
 
-#ifdef ESP32
-  WebServer server(80);
-#else
-  ESP8266WebServer server(80);
-#endif
+WebServer server(80);
 
 const int PIN_R1 = 25; 
 const int PIN_R2 = 33;
@@ -67,9 +60,51 @@ void loop() {
   server.handleClient();
 }`;
 
+  const esp8266Code = `#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+
+const char* ssid = "TU_RED_WIFI";
+const char* password = "TU_PASS_WIFI";
+
+ESP8266WebServer server(80);
+
+const int PIN_R1 = 5; // D1
+const int PIN_R2 = 4; // D2
+
+void handleToggle1() {
+  digitalWrite(PIN_R1, !digitalRead(PIN_R1));
+  server.send(200, "text/plain", "OK");
+}
+
+void handleToggle2() {
+  digitalWrite(PIN_R2, !digitalRead(PIN_R2));
+  server.send(200, "text/plain", "OK");
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(PIN_R1, OUTPUT);
+  pinMode(PIN_R2, OUTPUT);
+  digitalWrite(PIN_R1, HIGH); 
+  digitalWrite(PIN_R2, HIGH);
+  
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) { delay(500); }
+  
+  server.on("/toggle1", HTTP_POST, handleToggle1);
+  server.on("/toggle2", HTTP_POST, handleToggle2);
+  server.begin();
+}
+
+void loop() {
+  server.handleClient();
+}`;
+
+  const currentCode = boardType === 'ESP32' ? esp32Code : esp8266Code;
+
   const copyToClipboard = () => {
     vibrate(50);
-    navigator.clipboard.writeText(universalCode);
+    navigator.clipboard.writeText(currentCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -81,7 +116,7 @@ void loop() {
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic break-words">CONFIGURACIÓN</h2>
+        <h2 className="text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
 
         <div className="mx-auto max-w-xl p-6 rounded-[2rem] bg-rose-50 border-2 border-rose-100 flex flex-col items-center gap-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="bg-rose-500 p-2 rounded-full text-white">
@@ -109,7 +144,9 @@ void loop() {
                 </li>
                 <li className="flex flex-col gap-1">
                   <span className="text-primary text-[9px] font-black uppercase tracking-widest">PINES CONTROL</span>
-                  <span className="text-slate-300 text-xs font-medium uppercase">GPIO 25 (CH1) / GPIO 33 (CH2)</span>
+                  <span className="text-slate-300 text-xs font-medium uppercase">
+                    {boardType === 'ESP32' ? 'GPIO 25 (CH1) / GPIO 33 (CH2)' : 'GPIO 5-D1 (CH1) / GPIO 4-D2 (CH2)'}
+                  </span>
                 </li>
               </ul>
             </div>
@@ -140,7 +177,26 @@ void loop() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-4">
             <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE</h3>
-            <span className="inline-block px-4 py-1.5 rounded-lg bg-slate-100 text-[10px] font-black uppercase text-slate-500 tracking-widest">ESP32 / ESP8266</span>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => { vibrate(10); setBoardType('ESP32'); }}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  boardType === 'ESP32' ? "bg-primary text-white shadow-lg" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+                )}
+              >
+                ESP32
+              </button>
+              <button 
+                onClick={() => { vibrate(10); setBoardType('ESP8266'); }}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  boardType === 'ESP8266' ? "bg-primary text-white shadow-lg" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+                )}
+              >
+                ESP8266
+              </button>
+            </div>
           </div>
           <Button 
             className="h-14 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest px-8 action-button shadow-xl"
@@ -154,7 +210,7 @@ void loop() {
         <Card className="border-none bg-slate-900 text-slate-300 shadow-2xl rounded-[2.5rem] overflow-hidden">
           <CardContent className="p-0">
             <pre className="p-8 text-[11px] font-mono leading-relaxed overflow-x-auto h-[400px] bg-slate-950">
-              <code>{universalCode}</code>
+              <code>{currentCode}</code>
             </pre>
           </CardContent>
         </Card>
