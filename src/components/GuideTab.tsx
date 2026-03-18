@@ -75,7 +75,7 @@ void setup() {
             <AlertTriangle size={20} />
           </div>
           <p className="text-[11px] font-black uppercase tracking-tight text-rose-700 leading-tight text-center">
-            IMPORTANTE: RECUERDA QUE TU DISPOSITIVO Y EL MICROCONTROLADOR DEBEN ESTAR CONECTADOS A LA MISMA RED WI-FI PARA EL CORRECTO FUNCIONAMIENTO DE LA APP
+            IMPORTANTE : RECUERDA QUE TU DISPOSITIVO Y EL MICROCONTROLADOR DEBEN ESTAR CONECTADOS A LA MISMA RED WI-FI PARA EL CORRECTO FUNCIONAMIENTO DE LA APP
           </p>
         </div>
       </div>
