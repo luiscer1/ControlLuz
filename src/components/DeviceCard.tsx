@@ -82,11 +82,9 @@ export const DeviceCard = React.memo(function DeviceCard({
       });
       if (isMounted.current) {
         setIsOnline(true);
-        vibrate(15);
       }
     } catch (e) {
       if (isMounted.current) {
-        onUpdate(device.id, { status: device.status });
         setIsOnline(false);
       }
     } finally {
@@ -153,7 +151,7 @@ export const DeviceCard = React.memo(function DeviceCard({
             <div className="flex items-start gap-3">
               <AlertCircle size={16} className="shrink-0 mt-0.5 text-rose-500" />
               <p className="text-[10px] font-bold leading-tight uppercase tracking-tight text-rose-700">
-                NO SE PUDO CONECTAR REVISAR LA IP DE LA PLACA Y QUE ESTES EN LA MISMA RED WIFI
+                DISPOSITIVO FUERA DE LÍNEA. VERIFICA LA RED WIFI E IP.
               </p>
             </div>
             <button 
@@ -190,7 +188,7 @@ export const DeviceCard = React.memo(function DeviceCard({
               device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500"
             )}
           >
-            <Power size={32} strokeWidth={3} />
+            {loading && !isReconnecting ? <Loader2 size={32} className="animate-spin" /> : <Power size={32} strokeWidth={3} />}
           </button>
         </div>
       </CardContent>

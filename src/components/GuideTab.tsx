@@ -61,17 +61,17 @@ void setup() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-10 pb-40">
+    <div className="max-w-4xl mx-auto space-y-12 pb-40">
       <div className="space-y-6 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-5xl md:text-8xl font-black tracking-tight uppercase text-slate-900 leading-none italic break-words">CONFIGURACIÓN</h2>
+        <h2 className="text-6xl md:text-9xl font-black tracking-tight uppercase text-slate-900 leading-none italic break-words">CONFIGURACIÓN</h2>
       </div>
 
       <div className="space-y-6">
-        <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 px-4 italic">ESQUEMA DE CONEXIÓN</h3>
+        <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 px-4 italic">ESQUEMA DE CONEXIÓN</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-8 rounded-[2rem] bg-slate-900 text-white border-none shadow-2xl">
             <div className="space-y-6">
@@ -101,11 +101,11 @@ void setup() {
               <ul className="space-y-4">
                 <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight">
                   <Info size={14} className="text-primary shrink-0"/>
-                  <span className="uppercase">FASE AL 'COM' DEL RELÉ.</span>
+                  <span className="uppercase">CONECTA LA FASE AL 'COM' DEL RELÉ.</span>
                 </li>
                 <li className="flex gap-3 text-slate-600 text-[11px] font-medium leading-tight">
                   <Lightbulb size={14} className="text-primary shrink-0"/>
-                  <span className="uppercase">'NO' AL FOCO.</span>
+                  <span className="uppercase">CONECTA EL RETORNO AL 'NO'.</span>
                 </li>
               </ul>
             </div>
@@ -116,14 +116,15 @@ void setup() {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 px-4">
           <div className="space-y-4">
-            <h3 className="text-2xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE</h3>
-            <button className="px-6 py-2 rounded-xl text-[10px] font-black uppercase bg-primary text-white shadow-lg">ESP32</button>
+            <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 leading-none italic">FIRMWARE</h3>
+            <span className="inline-block px-4 py-1.5 rounded-lg bg-slate-100 text-[10px] font-black uppercase text-slate-500 tracking-widest">ESP32 / ESP8266</span>
           </div>
           <Button 
             className="h-14 rounded-2xl bg-slate-900 text-white font-black text-[10px] uppercase tracking-widest px-8 action-button shadow-xl"
             onClick={copyToClipboard}
           >
-            {copied ? <><Check size={18} className="mr-2" /> COPIADO</> : <><Copy size={18} className="mr-2" /> COPIAR CÓDIGO</>}
+            {copied ? <Check size={18} className="mr-2" /> : <Copy size={18} className="mr-2" />}
+            {copied ? 'COPIADO' : 'COPIAR CÓDIGO'}
           </Button>
         </div>
 

@@ -161,12 +161,21 @@ export default function Home() {
   };
 
   const turnOffAll = useCallback(() => {
+    const activeDevices = devices.filter(d => d.status);
+    
+    if (activeDevices.length === 0) {
+      vibrate(30);
+      toast({ title: "TODO APAGADO", description: "NO HAY LUCES ENCENDIDAS ACTUALMENTE" });
+      return;
+    }
+
     vibrate([50, 100, 50]);
     setDevices(prev => prev.map(d => ({ ...d, status: false })));
-    devices.filter(d => d.status).forEach(device => {
+    activeDevices.forEach(device => {
       fetch(`http://${device.ip}/toggle${device.channel}`, { method: 'POST', mode: 'no-cors' }).catch(() => {});
     });
-  }, [devices]);
+    toast({ title: "APAGADO TOTAL", description: "TODAS LAS ZONAS HAN SIDO APAGADAS" });
+  }, [devices, toast]);
 
   const filteredDevices = useMemo(() => {
     if (!searchTerm) return devices;
@@ -281,7 +290,7 @@ export default function Home() {
 
           <div className="flex gap-2">
             <Button onClick={() => setIsInstallOpen(true)} variant="outline" className="rounded-2xl h-14 border-primary/20 text-primary font-black uppercase text-[10px] px-4 action-button shadow-sm bg-white">
-              <Smartphone size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">INSTALAR EN IOS</span>
+              <Smartphone size={18} className="mr-0 md:mr-2" /> <span className="hidden md:inline">INSTALAR</span>
             </Button>
             <Button onClick={handleLogout} variant="ghost" className="rounded-2xl h-14 w-14 p-0 bg-white shadow-sm text-slate-400 hover:text-rose-500">
               <LogOut size={24} />
@@ -317,17 +326,24 @@ export default function Home() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                     <Input placeholder="BUSCAR ZONA..." className="h-14 pl-12 pr-4 rounded-2xl border-none bg-white shadow-sm font-black text-[10px] uppercase tracking-widest" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                   </div>
-                  {devices.length > 0 && (
-                    <Button onClick={turnOffAll} className="h-14 px-6 rounded-2xl font-black text-[10px] uppercase bg-slate-900 text-white shadow-xl action-button flex flex-col items-center justify-center">
-                      <PowerOff size={18} /><span>OFF</span>
-                    </Button>
-                  )}
+                  <Button onClick={turnOffAll} className="h-14 px-6 rounded-2xl font-black text-[10px] uppercase bg-slate-900 text-white shadow-xl action-button flex flex-col items-center justify-center">
+                    <PowerOff size={18} /><span>OFF</span>
+                  </Button>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {filteredDevices.map(device => (
                   <DeviceCard key={device.id} device={device} onUpdate={handleUpdateDevice} onDelete={handleDeleteDevice} onEdit={handleStartEdit} refreshTrigger={refreshTrigger} />
                 ))}
+                {devices.length === 0 && (
+                  <div className="col-span-full py-20 text-center space-y-4">
+                    <div className="bg-slate-100 h-20 w-20 rounded-full flex items-center justify-center mx-auto text-slate-300">
+                      <Zap size={40} />
+                    </div>
+                    <p className="font-black text-slate-400 uppercase tracking-widest text-[11px]">NO HAY ZONAS CONFIGURADAS</p>
+                    <Button onClick={() => setIsAddOpen(true)} className="rounded-2xl px-8 h-12 bg-primary text-white font-black uppercase text-[10px] tracking-widest">AGREGAR MI PRIMERA ZONA</Button>
+                  </div>
+                )}
               </div>
             </div>
           ) : ( <GuideTab /> )}
@@ -336,11 +352,11 @@ export default function Home() {
 
       <Dialog open={isInstallOpen} onOpenChange={setIsInstallOpen}>
         <DialogContent className="sm:max-w-md rounded-[3rem] bg-white p-10 border-none overflow-y-auto max-h-[90vh]">
-          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">INSTALAR EN IOS</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="text-2xl font-black uppercase text-primary italic text-center">INSTALACIÓN</DialogTitle></DialogHeader>
           <div className="space-y-6 pt-4">
             <div className="flex items-center gap-2 text-primary">
               <Smartphone size={18} />
-              <h3 className="text-sm font-black uppercase tracking-widest">PASOS PARA iPHONE</h3>
+              <h3 className="text-sm font-black uppercase tracking-widest">PARA DISPOSITIVOS MÓVILES</h3>
             </div>
             
             <div className="space-y-4 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
@@ -350,7 +366,7 @@ export default function Home() {
               <ol className="space-y-3">
                 <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
                   <span className="bg-primary text-white h-5 w-5 rounded-full flex items-center justify-center shrink-0 font-bold">1</span>
-                  TOCA EL BOTÓN "COMPARTIR" (CUADRADO CON FLECHA) EN SAFARI.
+                  TOCA EL BOTÓN "COMPARTIR" (iOS) O EL MENÚ DE 3 PUNTOS (Android).
                 </li>
                 <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
                   <span className="bg-primary text-white h-5 w-5 rounded-full flex items-center justify-center shrink-0 font-bold">2</span>
@@ -358,15 +374,10 @@ export default function Home() {
                 </li>
                 <li className="text-[10px] font-medium text-slate-500 uppercase flex gap-2">
                   <span className="bg-primary text-white h-5 w-5 rounded-full flex items-center justify-center shrink-0 font-bold">3</span>
-                  DALE A "AÑADIR" ARRIBA A LA DERECHA.
+                  DALE A "AÑADIR" PARA INSTALAR LA APP.
                 </li>
               </ol>
             </div>
-            
-            <p className="text-[9px] font-black text-slate-400 leading-relaxed uppercase text-center px-4">
-              UNA VEZ INSTALADA, SE ABRIRÁ A PANTALLA COMPLETA COMO UNA APP REAL.
-            </p>
-
             <Button onClick={() => setIsInstallOpen(false)} className="w-full h-16 rounded-2xl bg-slate-900 text-white font-black uppercase shadow-xl mt-4">ENTENDIDO</Button>
           </div>
         </DialogContent>
