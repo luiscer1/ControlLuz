@@ -28,7 +28,6 @@ export const DeviceCard = React.memo(function DeviceCard({
   onEdit, 
   refreshTrigger 
 }: DeviceCardProps) {
-  const [loading, setLoading] = useState(false);
   const [isReconnecting, setIsReconnecting] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean | null>(null);
   const isMounted = useRef(true);
@@ -68,12 +67,10 @@ export const DeviceCard = React.memo(function DeviceCard({
   }, [refreshTrigger, checkStatus]);
 
   const toggle = useCallback(async () => {
-    if (loading) return;
     vibrate([20, 80]);
     
     const nextStatus = !device.status;
     onUpdate(device.id, { status: nextStatus });
-    setLoading(true);
 
     try {
       await fetch(`http://${device.ip}/toggle${device.channel}`, { 
@@ -87,10 +84,8 @@ export const DeviceCard = React.memo(function DeviceCard({
       if (isMounted.current) {
         setIsOnline(false);
       }
-    } finally {
-      if (isMounted.current) setLoading(false);
     }
-  }, [device.id, device.ip, device.channel, device.status, onUpdate, loading]);
+  }, [device.id, device.ip, device.channel, device.status, onUpdate]);
 
   const handleReconnect = useCallback(() => {
     vibrate(20);
@@ -188,7 +183,7 @@ export const DeviceCard = React.memo(function DeviceCard({
               device.status ? "bg-emerald-600 border-emerald-500" : "bg-rose-600 border-rose-500"
             )}
           >
-            {loading && !isReconnecting ? <Loader2 size={32} className="animate-spin" /> : <Power size={32} strokeWidth={3} />}
+            <Power size={32} strokeWidth={3} />
           </button>
         </div>
       </CardContent>
