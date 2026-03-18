@@ -72,19 +72,14 @@ export const DeviceCard = React.memo(function DeviceCard({
     const nextStatus = !device.status;
     onUpdate(device.id, { status: nextStatus });
 
-    try {
-      await fetch(`http://${device.ip}/toggle${device.channel}`, { 
-        method: 'POST',
-        mode: 'no-cors'
-      });
-      if (isMounted.current) {
-        setIsOnline(true);
-      }
-    } catch (e) {
-      if (isMounted.current) {
-        setIsOnline(false);
-      }
-    }
+    fetch(`http://${device.ip}/toggle${device.channel}`, { 
+      method: 'POST',
+      mode: 'no-cors'
+    }).then(() => {
+      if (isMounted.current) setIsOnline(true);
+    }).catch(() => {
+      if (isMounted.current) setIsOnline(false);
+    });
   }, [device.id, device.ip, device.channel, device.status, onUpdate]);
 
   const handleReconnect = useCallback(() => {

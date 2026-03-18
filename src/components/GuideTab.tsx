@@ -11,7 +11,9 @@ import {
   Info,
   Copy,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  Smartphone,
+  ShieldAlert
 } from 'lucide-react';
 import { vibrate } from '@/lib/haptics';
 
@@ -81,6 +83,35 @@ void setup() {
       </div>
 
       <div className="space-y-6">
+        <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 px-4 italic flex items-center gap-3">
+          <ShieldAlert className="text-primary" /> RECUPERAR CONEXIÓN
+        </h3>
+        <Card className="p-8 rounded-[2rem] bg-white border-2 border-primary/10 shadow-xl space-y-6">
+          <p className="text-[11px] font-bold text-slate-600 uppercase leading-relaxed">
+            SI BORRASTE EL HISTORIAL O LA APP NO CONECTA, SIGUE ESTOS PASOS EN TU CELULAR:
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3 bg-slate-50 p-5 rounded-2xl">
+              <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">ANDROID (CHROME)</h4>
+              <ul className="text-[9px] font-bold text-slate-500 uppercase space-y-2">
+                <li>1. TOCA EL CANDADO JUNTO A LA URL</li>
+                <li>2. ENTRA A "CONFIGURACIÓN DE SITIOS"</li>
+                <li>3. PERMITE EL "CONTENIDO NO SEGURO"</li>
+              </ul>
+            </div>
+            <div className="space-y-3 bg-slate-50 p-5 rounded-2xl">
+              <h4 className="text-[10px] font-black text-primary uppercase tracking-widest">iOS (SAFARI)</h4>
+              <ul className="text-[9px] font-bold text-slate-500 uppercase space-y-2">
+                <li>1. INSTALA LA APP EN INICIO</li>
+                <li>2. VERIFICA RED 2.4GHZ</li>
+                <li>3. REINICIA EL NAVEGADOR</li>
+              </ul>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div className="space-y-6">
         <h3 className="text-3xl font-black uppercase tracking-tight text-slate-900 px-4 italic">ESQUEMA DE CONEXIÓN</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card className="p-8 rounded-[2rem] bg-slate-900 text-white border-none shadow-2xl">
@@ -92,11 +123,11 @@ void setup() {
               <ul className="space-y-4">
                 <li className="flex flex-col gap-1">
                   <span className="text-primary text-[9px] font-black uppercase tracking-widest">ALIMENTACIÓN</span>
-                  <span className="text-slate-300 text-xs font-medium">VIN a VCC / GND a GND</span>
+                  <span className="text-slate-300 text-xs font-medium uppercase">VIN a VCC / GND a GND</span>
                 </li>
                 <li className="flex flex-col gap-1">
                   <span className="text-primary text-[9px] font-black uppercase tracking-widest">PINES CONTROL</span>
-                  <span className="text-slate-300 text-xs font-medium">GPIO 25 (CH1) / GPIO 33 (CH2)</span>
+                  <span className="text-slate-300 text-xs font-medium uppercase">GPIO 25 (CH1) / GPIO 33 (CH2)</span>
                 </li>
               </ul>
             </div>
