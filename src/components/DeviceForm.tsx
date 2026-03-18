@@ -39,7 +39,7 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
       toast({
         variant: "destructive",
         title: "IP INVÁLIDA",
-        description: "POR FAVOR INGRESA UNA DIRECCIÓN IP VÁLIDA (EJ: 192.168.1.10)",
+        description: "INGRESA UNA IP REAL (EJ: 192.168.1.10)",
       });
       return;
     }
@@ -73,7 +73,7 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
             <Tag size={12} className="text-primary" /> ZONA DE ILUMINACIÓN
           </Label>
           <Input
-            placeholder="Ej: SALA DE ESTAR"
+            placeholder="SALA DE ESTAR"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -100,7 +100,7 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
           </Label>
           <Select value={channel} onValueChange={(val) => { vibrate(10); setChannel(val); }}>
             <SelectTrigger className="rounded-2xl border-slate-100 bg-slate-50 h-14 px-5 text-lg font-bold text-slate-900 focus:ring-primary">
-              <SelectValue placeholder="SELECCIONAR CANAL" />
+              <SelectValue placeholder="CANAL" />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-slate-100 bg-white shadow-2xl">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((ch) => (
@@ -123,7 +123,7 @@ export function DeviceForm({ initialData, devices, onSubmit, onCancel }: DeviceF
           className="w-full rounded-2xl h-16 bg-primary hover:bg-primary/90 text-white font-black uppercase text-[11px] tracking-widest shadow-lg action-button"
         >
           <Save size={16} className="mr-2" />
-          {initialData ? 'GUARDAR CAMBIOS' : 'VINCULAR AHORA'}
+          {initialData ? 'GUARDAR' : 'VINCULAR'}
         </Button>
         <Button 
           type="button" 

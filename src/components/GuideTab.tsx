@@ -3,24 +3,19 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { 
   Settings2,
-  AlertCircle,
   Cpu,
   Zap,
   Lightbulb,
   Info,
   Copy,
-  Check,
-  ShieldAlert
+  Check
 } from 'lucide-react';
 import { vibrate } from '@/lib/haptics';
-import { cn } from '@/lib/utils';
 
 export function GuideTab() {
   const [copied, setCopied] = useState(false);
-  const [selectedFirmware, setSelectedFirmware] = useState<'esp32' | 'esp8266'>('esp32');
 
   const esp32Code = `#include <WiFi.h>
 #include <WebServer.h>
@@ -58,11 +53,9 @@ void setup() {
   server.begin();
 }`;
 
-  const currentCode = selectedFirmware === 'esp32' ? esp32Code : '';
-
   const copyToClipboard = () => {
     vibrate(50);
-    navigator.clipboard.writeText(currentCode);
+    navigator.clipboard.writeText(esp32Code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -74,17 +67,7 @@ void setup() {
           <Settings2 size={14} /> MANUAL TÉCNICO
         </div>
         
-        <h2 className="text-4xl md:text-5xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
-
-        <Alert className="max-w-2xl mx-auto border-rose-200 bg-rose-50 rounded-[2rem] text-left p-6">
-          <ShieldAlert className="h-6 w-6 text-rose-500" />
-          <AlertTitle className="text-rose-700 font-black uppercase tracking-widest text-xs">¡IMPORTANTE: ERROR EN MÓVIL!</AlertTitle>
-          <AlertDescription className="text-rose-600 text-sm font-medium mt-2 leading-relaxed">
-            Al desplegar en AWS Amplify (HTTPS), el navegador del celular bloquea la conexión a la placa local (HTTP) por seguridad.
-            <br/><br/>
-            <strong>SOLUCIÓN:</strong> En tu celular, entra a los ajustes del sitio en el navegador y activa la opción <strong>"Contenido no seguro"</strong> para este sitio. Esto permitirá que la app hable con tu placa.
-          </AlertDescription>
-        </Alert>
+        <h2 className="text-5xl md:text-7xl font-black tracking-tight uppercase text-slate-900 leading-none italic">CONFIGURACIÓN</h2>
       </div>
 
       <div className="space-y-6">
@@ -147,7 +130,7 @@ void setup() {
         <Card className="border-none bg-slate-900 text-slate-300 shadow-2xl rounded-[2.5rem] overflow-hidden">
           <CardContent className="p-0">
             <pre className="p-8 text-[11px] font-mono leading-relaxed overflow-x-auto h-[400px] bg-slate-950">
-              <code>{currentCode}</code>
+              <code>{esp32Code}</code>
             </pre>
           </CardContent>
         </Card>

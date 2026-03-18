@@ -35,7 +35,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   const checkStatus = useCallback(async () => {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1500);
+      const timeoutId = setTimeout(() => controller.abort(), 2000);
       
       await fetch(`http://${device.ip}/`, { 
         method: 'GET',
@@ -53,7 +53,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   useEffect(() => {
     isMounted.current = true;
     checkStatus();
-    const interval = setInterval(checkStatus, 10000);
+    const interval = setInterval(checkStatus, 15000);
     return () => {
       isMounted.current = false;
       clearInterval(interval);
@@ -67,6 +67,7 @@ export const DeviceCard = React.memo(function DeviceCard({
   }, [refreshTrigger, checkStatus]);
 
   const toggle = useCallback(async () => {
+    if (loading) return;
     vibrate([20, 80]);
     const nextStatus = !device.status;
     onUpdate(device.id, { status: nextStatus });
@@ -89,7 +90,7 @@ export const DeviceCard = React.memo(function DeviceCard({
     } finally {
       if (isMounted.current) setLoading(false);
     }
-  }, [device.id, device.ip, device.channel, device.status, onUpdate]);
+  }, [device.id, device.ip, device.channel, device.status, onUpdate, loading]);
 
   const handleReconnect = useCallback(() => {
     vibrate(20);
